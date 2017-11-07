@@ -22,6 +22,12 @@ public class AreaAgent extends Agent{
 	
 	//Area Info
 	private String id;
+	private boolean drawGUI;
+
+	
+	//Initial Tick
+	private long tini;
+	private int ratio;
 	
 	
 	protected void setup(){
@@ -46,7 +52,30 @@ public class AreaAgent extends Agent{
 		
 		//An unique identifier for the Area
 		this.id = getName().toString();
+		
+		//Area location
+		this.locationX = Integer.parseInt((String) this.getArguments()[1]);
+		this.locationY = Integer.parseInt((String) this.getArguments()[2]);
+		
+		//Total capacity of the AREA
+		this.totalSpaces = Integer.parseInt((String) this.getArguments()[3]);
+		this.freeSpaces = totalSpaces;
+		
+		//drawGUI
+		this.drawGUI = (boolean) this.getArguments()[4];
+		
+		//Get the initial time tick from eventManager
+		this.tini = (long) this.getArguments()[5];
+		this.ratio = (int) this.getArguments()[6];
+		
+
+		
 	}
+	
+	
+	
+	
+	
 	
 	
 

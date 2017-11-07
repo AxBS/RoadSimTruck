@@ -120,9 +120,8 @@ public class EventManagerBehaviour extends CyclicBehaviour {
 									"area" + Long.toString(currentTick) + Integer.toString(counter),
 									"agents.AreaAgent",
 									new Object[] { this.agent.getMap(),
-											/* IntOrigin, IntDest */ parts[2], parts[3],
-											/* maxSpeed truck */ 	 Integer.parseInt(parts[4]),
-											/* alg type */ 			 parts[5],
+											/* LocationX, LocationY */ parts[2], parts[3],
+											/* Capacity */			 parts[4],
 											/* drawGUI */ 			 this.drawGUI,
 											/* Initial time */ 		 currentTick,
 											/* sensor ratio */ 		 10 });
@@ -130,7 +129,7 @@ public class EventManagerBehaviour extends CyclicBehaviour {
 							agent.start();
 
 							// For the logs
-							str.append(parts[1] + ": Area (position) " + parts[2] + " to " + parts[3] + "\n");
+							str.append(parts[1] + ": Area (position) X:" + parts[2] + " Y:" + parts[3] + "\n");
 
 						} catch (StaleProxyException e) {
 							System.out.println("Error starting areaAgent");
