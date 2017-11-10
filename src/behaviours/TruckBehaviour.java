@@ -117,7 +117,7 @@ public class TruckBehaviour extends CyclicBehaviour {
 					// between previousTick and currentTick
 					// We transform km/h to k/s if divide it by 3600
 					float pkIncrement = (float) (currentSpeed / 3600) * (currentTick - this.previousTick);
-					System.out.println("PKCurrent: " + currentPk);
+					//System.out.println("PKCurrent: " + currentPk);
 					// The proportion of the map is 1px ~= 29m and one
 					// tick =1s. Calculate the pixels per tick I have to
 					// move

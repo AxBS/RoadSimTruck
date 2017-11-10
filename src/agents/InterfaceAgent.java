@@ -11,6 +11,7 @@ import javax.swing.SwingUtilities;
 
 import org.json.JSONObject;
 
+import behaviours.InterfaceAddAreaBehaviour;
 import behaviours.InterfaceAddCarBehaviour;
 import behaviours.InterfaceAddTruckBehaviour;
 import behaviours.InterfaceDrawBehaviour;
@@ -85,6 +86,9 @@ public class InterfaceAgent extends Agent{
 
 			//Launch the behaviour that will add cars
 			addBehaviour(new InterfaceAddCarBehaviour(this));
+			
+			//Launch the behaviour that will add areas
+			addBehaviour(new InterfaceAddAreaBehaviour(this));
 			
 			//TODO Launch the behaviour that will add trucks
 			addBehaviour(new InterfaceAddTruckBehaviour(this));

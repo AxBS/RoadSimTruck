@@ -35,6 +35,7 @@ import javax.swing.text.DefaultCaret;
 
 import org.json.JSONObject;
 
+import agents.AreaAgent;
 import agents.InterfaceAgent;
 import agents.TruckAgent;
 import environment.Intersection;
@@ -269,6 +270,22 @@ public class CanvasWorld extends JFrame
 
 		contentPane.addCar(ag, id, algorithmColor, x, y, specialColor);	
 	}
+	
+	/**
+	 * Adds an Area
+	 * 
+	 * @param id
+	 * @param x
+	 * @param y
+	 * @param capacity
+	 */
+	public void addArea(String ag, String id, int capacity, int locationX, int locationY) {
+		
+		contentPane.addArea(ag, id, capacity, locationX, locationY);
+	}
+	
+	
+	
 
 	/**
 	 * Moves an existing car
@@ -308,6 +325,10 @@ public class CanvasWorld extends JFrame
 
 		private static final long serialVersionUID = 1L;
 		private HashMap<String, Mobile> carPositions;
+		
+		//AREA POSITIONS
+		private HashMap<String, int[]> areaPositions = new HashMap<String, int[]>();
+		
 
 		private Image backGround;
 		private ImageIcon mapImage = new ImageIcon(CanvasWorld.class.getClassLoader().getResource("staticFiles/images/red.png"));
@@ -324,6 +345,22 @@ public class CanvasWorld extends JFrame
 			this.setLayout(null);
 		}
 
+		/**
+		 * Adds a area to the panel
+		 * 
+		 * @param id
+		 * @param area
+		
+		 */
+		//TODO
+		public void addArea(String ag, String id, int capacity, int locationX, int locationY) {
+
+			int[] data = new int[] {locationX,locationY,capacity};
+			areaPositions.put(id, data);
+			repaint();
+		}
+		
+		
 		/**
 		 * Adds a car to the panel
 		 * 
@@ -433,6 +470,27 @@ public class CanvasWorld extends JFrame
 				oval.setFrame(in.getX()-2, in.getY()-2, 4, 4);
 				g.fill(oval);
 			}
+			
+			//Draw the Areas
+			
+			if(areaPositions.size()>0) {
+				for(String areaID : areaPositions.keySet()) {
+					
+					// area -> locationX,locationY,capacity
+					int area[] = areaPositions.get(areaID);
+					
+					g.setColor(Color.BLUE);
+					
+					oval.setFrame((double)area[0]-2, (double)area[1]-2, 6, 6);
+					g.fill(oval);
+					g.drawString(areaID, area[0]-2, area[1]-2);
+				}
+			}else {
+				System.out.println("LISTA AREAS VACIA");
+			}
+			
+		
+			
 
 			//Draw the cars
 			Color c = null;
@@ -582,6 +640,14 @@ public class CanvasWorld extends JFrame
 		public HashMap<String, Mobile> getCars() {
 
 			return carPositions;
+		}
+		
+		public void setAreas(HashMap<String, int[]> areas) {
+			this.areaPositions = areas;
+		}
+		
+		public HashMap<String, int[]> getAreas(){
+			return this.areaPositions;
 		}
 	}
 

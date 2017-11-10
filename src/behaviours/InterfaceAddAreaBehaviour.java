@@ -14,19 +14,19 @@ import jade.lang.acl.MessageTemplate;
  *  the GUI and executes a behaviour to update the speed of the car.
  *
  */
-public class InterfaceAddCarBehaviour extends CyclicBehaviour {
+public class InterfaceAddAreaBehaviour extends CyclicBehaviour {
 
 	private static final long serialVersionUID = 1L;
 
 	//Template to listen for the new communications from cars
-	private MessageTemplate mtNewCar = 
+	private MessageTemplate mtNewArea = 
 			MessageTemplate.and(
 				MessageTemplate.MatchPerformative(ACLMessage.INFORM),
-				MessageTemplate.MatchOntology("newCarOntology"));
+				MessageTemplate.MatchOntology("newAreaOntology"));
 	
 	private InterfaceAgent agent;
 	
-	public InterfaceAddCarBehaviour(InterfaceAgent a) {
+	public InterfaceAddAreaBehaviour(InterfaceAgent a) {
 		
 		this.agent = a; 
 	}
@@ -34,24 +34,24 @@ public class InterfaceAddCarBehaviour extends CyclicBehaviour {
 	@Override
 	public void action() {
 
-		ACLMessage msg = myAgent.receive(mtNewCar);
+		ACLMessage msg = myAgent.receive(mtNewArea);
 		
 		if (msg != null) {
 
 			JSONObject cont = new JSONObject(msg.getContent());
 
 			final String id = cont.getString("id");
-			final float x = (float) cont.getInt("x");
-			final float y = (float) cont.getInt("y");
-			final int algorithmType = cont.getInt("algorithmType");
+			final int x = (int) cont.getInt("x");
+			final int y = (int) cont.getInt("y");
+			final int capacity = cont.getInt("capacity");
 			
 			//Add the car to the scene
 			SwingUtilities.invokeLater(new Runnable() {
 
 				@Override
 				public void run() {
-					agent.getMap().addCar(myAgent.getLocalName(), id,
-							              algorithmType, x, y, false);
+					agent.getMap().addArea(myAgent.getLocalName(), id,
+							              capacity, x, y);
 				}
 			});
 			
