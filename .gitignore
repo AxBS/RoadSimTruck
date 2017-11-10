@@ -78,3 +78,8 @@ APDescription.txt
 MTPs-Main container.txt
 .classpath
 RoadSImV2V/.classpath
+
+#Intellij Config files
+.idea/
+out/
+*.iml
