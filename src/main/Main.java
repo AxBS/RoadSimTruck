@@ -145,11 +145,36 @@ public class Main {
 				                     rt.createAgentContainer(profile);
 		
 		//:::: SEGMENTS ::::
+		
+		//--------------------------------------------------------------------------
+		//   AREAS
+		//--------------------------------------------------------------------------
+		
+		//Areas
+		//Create a profile for the AREA container
+		profile = new ProfileImpl(null, 1099, null);
+		profile.setParameter(Profile.CONTAINER_NAME, "Area container");
+		
+		/*
+		 * This activates the Topic service, which allows us to 
+		 *    "broadcast" messages
+		 */
+		profile.setParameter(Profile.SERVICES,
+				        "jade.core.messaging.TopicManagementService");
+
+		//Container that will hold the agents
+		jade.wrapper.AgentContainer areaContainer = 
+				                     rt.createAgentContainer(profile);
+		
+		//--------------------------------------------------------------------------
+		//--------------------------------------------------------------------------
+		//--------------------------------------------------------------------------
+
 
 		//Load the map
 		try {
 			// The map load the segments that create the SegmentAgent
-			map = new Map("staticFiles/map", segmentContainer,
+			map = new Map("staticFiles/map", segmentContainer, areaContainer,
 					      segmentLogging, loggingDirectory, drawGUI);
 		} catch (IOException e) {
 
@@ -229,28 +254,7 @@ public class Main {
 		jade.wrapper.AgentContainer truckContainer = 
 				                     rt.createAgentContainer(profile);
 		
-		//--------------------------------------------------------------------------
-		//   AREAS
-		//--------------------------------------------------------------------------
 		
-		//Areas
-		//Create a profile for the AREA container
-		profile = new ProfileImpl(null, 1099, null);
-		profile.setParameter(Profile.CONTAINER_NAME, "Area container");
-		
-		/*
-		 * This activates the Topic service, which allows us to 
-		 *    "broadcast" messages
-		 */
-		profile.setParameter(Profile.SERVICES,
-				        "jade.core.messaging.TopicManagementService");
-
-		//Container that will hold the agents
-		jade.wrapper.AgentContainer areaContainer = 
-				                     rt.createAgentContainer(profile);
-		
-		//--------------------------------------------------------------------------
-		//--------------------------------------------------------------------------
 		
 		
 		for (int i=0; i<numberOfCars; i++){

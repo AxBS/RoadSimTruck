@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.json.JSONObject;
 
+import environment.Area;
 import jade.core.Agent;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
@@ -16,29 +17,21 @@ import jade.lang.acl.ACLMessage;
  */
 public class AreaAgent extends Agent{
 	
-	//Location of the Area
-	private float locationX, locationY;
-	private float locationPK;
-	private String roadCode;
+	
+	private Area area;
+	
+	private final int reservationRadious = 30;
+	
 	
 	private ArrayList<String> lstReservas;				// Guarda el nombre del vehiculo que reserva
+	private ArrayList<String> lstPreReservas;				// Guarda el nombre de los vehiculos pre-reservados
 	private ArrayList<String> lstSinReservas;			// Guarda el nombre del vehículo que aparca sin reserva
 	private ArrayList<String> parking;					// Guarda el nombre del vehiculo que ocupa una plaza
 	private DFAgentDescription interfaceAgent;
 	
-	//Capacity
-	private int freeSpaces;
-	private int totalSpaces;
-	
-	//Area Info
-	private String id;
 	private boolean drawGUI;
 
-	
-	//Initial Tick
-	private long tini;
-	private int ratio;
-	
+
 	
 	
 	protected void setup(){
@@ -61,25 +54,17 @@ public class AreaAgent extends Agent{
 			this.takeDown();
 		}
 		
-		//An unique identifier for the Area
-		this.id = getName().toString();
-		
-		//Area location
-		this.locationX = Integer.parseInt((String) this.getArguments()[1]);
-		this.locationY = Integer.parseInt((String) this.getArguments()[2]);
-		
-		//Total capacity of the AREA
-		this.totalSpaces = Integer.parseInt((String) this.getArguments()[3]);
-		this.freeSpaces = totalSpaces;
-		
-		//drawGUI
-		this.drawGUI = (boolean) this.getArguments()[4];
-		
-		//Get the initial time tick from eventManager
-		this.tini = (long) this.getArguments()[5];
-		this.ratio = (int) this.getArguments()[6];
-		
+		this.area =  (Area) this.getArguments()[0];
+		this.area.setAreaAgent(this);
+		this.drawGUI = (boolean) this.getArguments()[1];
 
+		
+		//Initializing values 
+		
+		this.lstPreReservas = new ArrayList<String>();
+		this.lstReservas = new ArrayList<String>();
+		this.parking = new ArrayList<String>();
+		this.lstSinReservas = new ArrayList<String>();
 		
 		
 		
@@ -109,34 +94,9 @@ public class AreaAgent extends Agent{
 			this.interfaceAgent = result[0];
 		}
 		
-		//An unique identifier for the car
-		this.id = getName().toString();
-		
-		
-		
-		if(this.drawGUI){
-			//We notify the interface (send msg to InterfaceAgent) about the new area
-			ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-			msg.addReceiver(interfaceAgent.getName());
-			JSONObject areaData = new JSONObject();
-			areaData.put("x", this.locationX);
-			areaData.put("y", this.locationY);
-			areaData.put("id", this.id);
-			areaData.put("capacity", this.totalSpaces);
-			msg.setContent(areaData.toString());
-			
-			//TODO change to newTruckOntology
-			msg.setOntology("newAreaOntology");
-			send(msg);
-		}
+
 		
 	}
-	
-	
-	
-	
-	
-	
-	
+
 
 }

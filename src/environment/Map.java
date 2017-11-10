@@ -35,13 +35,16 @@ public class Map implements Serializable {
 	// JGRAPHT
 	private DefaultDirectedWeightedGraph<Intersection, Edge> jgraht;
 
-	//The container where the segment agents will be created
+	//The container where the segment and area agents will be created
 	private transient jade.wrapper.AgentContainer mainContainer;
+	private transient jade.wrapper.AgentContainer areaContainer;
+
 	
 	//Parameters for the segments
 	private boolean segmentLogging;
 	private String loggingDirectory;
 	HashMap<String, Segment> segmentsAux;
+	private ArrayList<Area> listAreas;
 	
 	// Draw th GUI
 	private boolean drawGUI;
@@ -52,13 +55,14 @@ public class Map implements Serializable {
 	 * @param folder Folder where the files are stored.
 	 */
 	public Map(String folder, 
-			   jade.wrapper.AgentContainer mainContainer,
+			   jade.wrapper.AgentContainer mainContainer,jade.wrapper.AgentContainer areaContainer,
 			   boolean segmentLogging, String loggingDirectory, 
 			   boolean drawGUI) 
 		   throws IOException{
 
 		//For the agents
-		this.mainContainer = mainContainer;		
+		this.mainContainer = mainContainer;	
+		this.areaContainer = areaContainer;
 		this.segmentLogging = segmentLogging;
 		this.loggingDirectory = loggingDirectory;
 		this.jgraht = 
@@ -80,6 +84,7 @@ public class Map implements Serializable {
 		//Check correct files
 		BufferedReader intersectionsReader = null, 
 				       segmentsReader = null, 
+				       areaReader = null,
 				       stepsReader = null;
 
 		for(int i=0; i<files.length; i++){
@@ -99,11 +104,15 @@ public class Map implements Serializable {
 
 				stepsReader = new BufferedReader(
 						new FileReader(files[i].getAbsolutePath()));
+			}else if(files[i].getName().equals("areas")){
+
+				areaReader = new BufferedReader(
+						new FileReader(files[i].getAbsolutePath()));
 			}
 		}
 
 		if(segmentsReader == null || intersectionsReader == null || 
-				stepsReader == null) {
+				stepsReader == null || areaReader == null) {
 
 			throw new IOException("Couldn't find the files.");
 		} else {
@@ -242,6 +251,28 @@ public class Map implements Serializable {
 
 					line = stepsReader.readLine();
 				}
+				line = areaReader.readLine();
+				listAreas = new ArrayList<Area>();
+				//Read all the areas				
+				while(line != null){
+
+					JSONObject area = new JSONObject(line);
+
+					//The area the step belongs to
+					String idSegment = area.getString("idSegment");
+
+					//Create the step
+					Area a = new Area(area.getJSONObject("coordinates").getInt("x"),
+							area.getJSONObject("coordinates").getInt("y"), area.getInt("pk"),
+						segmentsAux.get(idSegment), area.getInt("capacity"), area.getString("id"), areaContainer);
+
+					//Add the steps to the segment
+					listAreas.add(a);				
+
+					line = stepsReader.readLine();
+				}
+				
+				
 				
 				//Move the segments
 				for (String string : segmentsAux.keySet()) {
@@ -257,6 +288,7 @@ public class Map implements Serializable {
 				intersectionsReader.close();
 				segmentsReader.close();
 				stepsReader.close();
+				areaReader.close();
 			}
 		}
 	}
@@ -400,5 +432,15 @@ public class Map implements Serializable {
 	public Segment getSegmentByID(String id) {
 		return segmentsAux.get(id);
 	}
+
+	public ArrayList<Area> getListAreas() {
+		return listAreas;
+	}
+
+	public void setListAreas(ArrayList<Area> listAreas) {
+		this.listAreas = listAreas;
+	}
+	
+	
 	
 }

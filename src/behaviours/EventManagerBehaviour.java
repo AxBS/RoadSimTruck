@@ -112,31 +112,7 @@ public class EventManagerBehaviour extends CyclicBehaviour {
 							System.out.println("Error starting carAgent");
 							e.printStackTrace();
 						}
-					} else if (parts[0].equals("newArea")) {
-						// TODO
-						// Revise properties of TRUCK.
-						try {
-							AgentController agent = this.agent.getAreaContainer().createNewAgent(
-									"area" + Long.toString(currentTick) + Integer.toString(counter),
-									"agents.AreaAgent",
-									new Object[] { this.agent.getMap(),
-											/* LocationX, LocationY */ parts[2], parts[3],
-											/* Capacity */			 parts[4],
-											/* drawGUI */ 			 this.drawGUI,
-											/* Initial time */ 		 currentTick,
-											/* sensor ratio */ 		 10 });
-
-							agent.start();
-
-							// For the logs
-							str.append(parts[1] + ": Area (position) X:" + parts[2] + " Y:" + parts[3] + "\n");
-
-						} catch (StaleProxyException e) {
-							System.out.println("Error starting areaAgent");
-							e.printStackTrace();
-						}
-
-					}	else if (parts[0].equals("newTruck")) {
+					} else if (parts[0].equals("newTruck")) {
 							// TODO
 							// Revise properties of TRUCK.
 							try {

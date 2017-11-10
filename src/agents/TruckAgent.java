@@ -45,6 +45,9 @@ public class TruckAgent extends Agent {
 	//Selected Area to stop
 	private float AreaX=317, AreaY=304;
 	
+	//Favourite area list
+	//TODO
+	
 	private int direction;
 	private int ratio;
 	private int currentSpeed, maxSpeed;
