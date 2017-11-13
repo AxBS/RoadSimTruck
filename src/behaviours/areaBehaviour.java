@@ -29,13 +29,6 @@ public class areaBehaviour extends CyclicBehaviour {
 	public void action() {
 		// TODO Auto-generated method stub
 		
-		  
-		
-		
-		
-		
-		
-		
 	}
 	
 }
