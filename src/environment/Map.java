@@ -11,16 +11,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-import org.jgrapht.graph.DefaultDirectedWeightedGraph;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import jgrapht.Edge;
 
 /**
  * Class that holds the representation of a map.
  * 
  * It also has all the logic to read the map files and creates the 
- * {@link SegmentAgent}.
+ * {@link Segment}.
  *
  */
 public class Map implements Serializable {
@@ -32,8 +30,6 @@ public class Map implements Serializable {
 	private Integer intersectionCount;
 	private Integer segmentCount;
 	private List<Intersection> intersections;
-	// JGRAPHT
-	private DefaultDirectedWeightedGraph<Intersection, Edge> jgraht;
 
 	//The container where the segment and area agents will be created
 	private transient jade.wrapper.AgentContainer mainContainer;
@@ -65,9 +61,6 @@ public class Map implements Serializable {
 		this.areaContainer = areaContainer;
 		this.segmentLogging = segmentLogging;
 		this.loggingDirectory = loggingDirectory;
-		this.jgraht = 
-				new DefaultDirectedWeightedGraph<Intersection, Edge>
-		                (Edge.class);
 
 		//Read the files
 		this.intersectionCount = 0;
@@ -144,8 +137,7 @@ public class Map implements Serializable {
 					this.intersections.add(intersection);
 					intersectionsAux.put(inter.getString("id"),
 							             intersection);
-					//JGRAPHT
-					this.jgraht.addVertex(intersection);
+
 					System.out.println("Map.java-- Add Vertex " + 
 					                  intersection.getId() +" : [ " +
 							          intersection.toString() + " ]");
@@ -204,15 +196,6 @@ public class Map implements Serializable {
 
 					if(destination != null){
 						destination.addInSegment(segment);
-					}
-					
-					//Add an Edge to de Jgraph
-					if(origin != null && destination != null){
-						Edge e = new Edge(segment);
-						System.out.println("Map.java-- Add Edge " + 
-						                   segment.getId() +": [ " +
-								           e.toString() + " ]");
-						this.jgraht.addEdge(origin, destination, e);
 					}
 
 					segmentsAux.put(segment.getId(), segment);
@@ -326,14 +309,6 @@ public class Map implements Serializable {
 		int randomNum = rand.nextInt(this.intersectionCount);
 
 		return this.intersections.get(randomNum).getId();
-	}
-	
-	/**
-	 * Returns the jgraph with the structure of the map
-	 * */
-	public DefaultDirectedWeightedGraph<Intersection, Edge> 
-	       getJgraht() {
-		return jgraht;
 	}
 
 	/**

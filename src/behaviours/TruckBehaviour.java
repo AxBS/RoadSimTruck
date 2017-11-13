@@ -17,7 +17,6 @@ import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import trafficData.TrafficData;
-import jgrapht.Edge;
 
 /**
  * This behaviour is used by the truckAgent and calculates the next 
@@ -175,10 +174,10 @@ public class TruckBehaviour extends CyclicBehaviour {
 							// Calculate the information to the jgraph
 							// and Deregister from previous segment
 							this.serviceLevelSegment = this.agent.getCurrentSegment().getCurrentServiceLevel();
-							this.agent.getJgraht().addEdge(this.agent.getCurrentSegment().getOrigin(),
+							/*this.agent.getJgraht().addEdge(this.agent.getCurrentSegment().getOrigin(),
 									next.getSegment().getOrigin(), new Edge(this.agent.getCurrentSegment(),
 											this.serviceLevelSegment, agent.getTini(), tfin));
-
+*/
 							// Deregister from previous segment
 							this.informSegment(this.agent.getCurrentSegment(), "deregister");
 
@@ -195,7 +194,7 @@ public class TruckBehaviour extends CyclicBehaviour {
 							agent.setCurrentPk(next.getSegment().getPkIni());
 							// I don't know if remove the edge or if remove
 							// the content of the edge
-							this.agent.getJgraht().removeEdge(next.getSegment().getOrigin(),
+							/*this.agent.getJgraht().removeEdge(next.getSegment().getOrigin(),
 									next.getSegment().getDestination());
 
 							// TODO:If we are using the smart algorithm,
@@ -207,7 +206,7 @@ public class TruckBehaviour extends CyclicBehaviour {
 
 							if (this.agent.isSmart()) {
 								this.agent.recalculate(this.agent.getCurrentSegment().getOrigin().getId());
-							}
+							}*/
 
 							// Once rerouted, Delete data from future
 							// Traffic related to this new segment

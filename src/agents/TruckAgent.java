@@ -23,7 +23,6 @@ import environment.Map;
 import environment.Path;
 import environment.Segment;
 import environment.Step;
-import jgrapht.Edge;
 
 /**
  * This code represents a Truck, it will have an origin an a 
@@ -61,10 +60,8 @@ public class TruckAgent extends Agent {
 	private Segment currentSegment;
 	private String initialIntersection, finalIntersection;
 	private boolean specialColor = false;
-	private boolean smart = false;
 	private Algorithm alg;
 	private int algorithmType;
-	private DefaultDirectedWeightedGraph<Intersection, Edge> jgraht;
    
 	// This object stores current traffic sensored data
 	// every time a car goes into a new segment, this object is
@@ -104,10 +101,6 @@ public class TruckAgent extends Agent {
 
 		//Get the map from an argument
 		this.map = (Map) this.getArguments()[0];
-		//Get the jgraph from the map
-		this.jgraht = this.map.getJgraht();
-		System.out.println("TruckAgent.java-- Get JgraphT: " + 
-		                   this.jgraht.toString());
 		//Get the starting and final points of my trip
 		this.initialIntersection = (String) this.getArguments()[1];
 		this.finalIntersection = (String) this.getArguments()[2];
@@ -133,11 +126,6 @@ public class TruckAgent extends Agent {
 			this.algorithmType = Method.SHORTEST.value;
 			this.alg = factory.getAlgorithm(Method.SHORTEST);
 			
-		} else if (routeType.equals("smartest")) {
-			
-			this.algorithmType = Method.SMARTEST.value;
-			this.alg = factory.getAlgorithm(Method.SMARTEST);
-			this.smart = true;
 		}
 		
 		//Get the initial time tick from eventManager
@@ -365,24 +353,9 @@ public class TruckAgent extends Agent {
 	public boolean getSpecialColor() {
 		return specialColor;
 	}
-	
-	public DefaultDirectedWeightedGraph<Intersection, Edge> 
-	                                                   getJgraht() {
-		return jgraht;
-	}
-
-	public void setJgraht(
-			  DefaultDirectedWeightedGraph<Intersection,Edge> jgraht){
-		this.jgraht = jgraht;
-	}
 
 	public void setSpecialColor(boolean specialColor) {
 		this.specialColor = specialColor;
-	}
-	
-	public boolean isSmart() {
-		
-		return this.smart;
 	}
 
 	public int getAlgorithmType() {
