@@ -144,18 +144,16 @@ public class TruckAgent extends Agent {
 				                                          getX());
 		setY(map.getIntersectionByID(getInitialIntersection()).
 				                                          getY());
-		
+
 		//Store data received from other cars in a Map
 		futureTraffic = new TrafficDataInStore();
-		
+
 		//Store data to send to other cars in my route
 		pastTraffic = new TrafficDataOutStore();
 
 
 		// Store current trafficData sensored by myself
 		sensorTrafficData = new TrafficData();
-		// Tini for measuring traffic data intervals in twin segments 
-		//tini = elapsedtime;
 		
 		if(this.drawGUI){
 			//Find the interface agent
@@ -211,6 +209,7 @@ public class TruckAgent extends Agent {
 		//:::::::::::::::::::::::::::::::::::::
 		//TODO change to truckToSegmentOntology
 		//:::::::::::::::::::::::::::::::::::::
+		//TODO: Aquí hay que hacer una prereserva pero para ello tenemos que ver cuales son sus predilectos
 		msg.setOntology("carToSegmentOntology");
 		msg.setConversationId("register");
 		msg.addReceiver(next.getSegment().getSegmentAgent().getAID());

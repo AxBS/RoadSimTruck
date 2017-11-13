@@ -2,6 +2,7 @@ package agents;
 
 import java.util.ArrayList;
 
+import behaviours.AreaBehaviour;
 import org.json.JSONObject;
 
 import environment.Area;
@@ -24,16 +25,13 @@ public class AreaAgent extends Agent{
 	
 	
 	private ArrayList<String> lstReservas;				// Guarda el nombre del vehiculo que reserva
-	private ArrayList<String> lstPreReservas;				// Guarda el nombre de los vehiculos pre-reservados
+	private ArrayList<String> lstPreReservas;			// Guarda el nombre de los vehiculos pre-reservados
 	private ArrayList<String> lstSinReservas;			// Guarda el nombre del vehículo que aparca sin reserva
 	private ArrayList<String> parking;					// Guarda el nombre del vehiculo que ocupa una plaza
 	private DFAgentDescription interfaceAgent;
 	
 	private boolean drawGUI;
 
-
-	
-	
 	protected void setup(){
 		
 		//Register the agent
@@ -65,10 +63,7 @@ public class AreaAgent extends Agent{
 		this.lstReservas = new ArrayList<String>();
 		this.parking = new ArrayList<String>();
 		this.lstSinReservas = new ArrayList<String>();
-		
-		
-		
-		
+
 		if(this.drawGUI){
 			//Find the interface agent
 			dfd = new DFAgentDescription();
@@ -94,9 +89,26 @@ public class AreaAgent extends Agent{
 			this.interfaceAgent = result[0];
 		}
 		
-
+		addBehaviour(new AreaBehaviour(this));
 		
 	}
 
+	public boolean doPrereserve(String truckName){
+		// Si hay sitio en el area que preserve sino nada
+		return true;
+	}
+
+	public boolean doReserve(String truckName){
+		// Hacer la reserva si se puede
+		return true;
+	}
+
+	public void doDereserve(String truckName){
+		//Realizar la dereserva
+	}
+
+	public void doIllegalReserve(String truckName){
+		// Realizar la reserva ilegal
+	}
 
 }

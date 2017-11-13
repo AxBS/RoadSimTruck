@@ -171,13 +171,9 @@ public class TruckBehaviour extends CyclicBehaviour {
 						if (!this.agent.getCurrentSegment().equals(next.getSegment())) {
 
 							long tfin = Long.parseLong(msg.getContent());
-							// Calculate the information to the jgraph
 							// and Deregister from previous segment
 							this.serviceLevelSegment = this.agent.getCurrentSegment().getCurrentServiceLevel();
-							/*this.agent.getJgraht().addEdge(this.agent.getCurrentSegment().getOrigin(),
-									next.getSegment().getOrigin(), new Edge(this.agent.getCurrentSegment(),
-											this.serviceLevelSegment, agent.getTini(), tfin));
-*/
+
 							// Deregister from previous segment
 							this.informSegment(this.agent.getCurrentSegment(), "deregister");
 
@@ -194,19 +190,6 @@ public class TruckBehaviour extends CyclicBehaviour {
 							agent.setCurrentPk(next.getSegment().getPkIni());
 							// I don't know if remove the edge or if remove
 							// the content of the edge
-							/*this.agent.getJgraht().removeEdge(next.getSegment().getOrigin(),
-									next.getSegment().getDestination());
-
-							// TODO:If we are using the smart algorithm,
-							// recalculate all the traffic states on the
-							// map with the information provided from
-							// othercarAgents, and then rerouting
-							// accordingly.
-							// TODO: futureTrafficStore analysis
-
-							if (this.agent.isSmart()) {
-								this.agent.recalculate(this.agent.getCurrentSegment().getOrigin().getId());
-							}*/
 
 							// Once rerouted, Delete data from future
 							// Traffic related to this new segment
