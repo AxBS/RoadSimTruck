@@ -41,6 +41,9 @@ public class TruckAgent extends Agent {
 	
 	//Time spent resting
 	private long secondsToRest = 120; 
+	
+	//Max distance the truck can cover without stopping
+	int MaxKmToGO = 0;
 
 	//Selected Area to stop
 	private float AreaX=317, AreaY=304;
@@ -100,7 +103,7 @@ public class TruckAgent extends Agent {
 		}
 		
 		//Is necessary draw the gui
-		this.drawGUI = (boolean) this.getArguments()[5];
+		this.drawGUI = (boolean) this.getArguments()[6];
 
 		//Get the map from an argument
 		this.map = (Map) this.getArguments()[0];
@@ -121,7 +124,8 @@ public class TruckAgent extends Agent {
 		AlgorithmFactory factory = new AlgorithmFactory();
 		this.alg = null;
 		
-		String routeType = (String) this.getArguments()[4];
+		MaxKmToGO = (int) this.getArguments()[4];
+		String routeType = (String) this.getArguments()[5];
 		
 		if (routeType.equals("fastest")) {
 			
@@ -141,10 +145,10 @@ public class TruckAgent extends Agent {
 		}
 		
 		//Get the initial time tick from eventManager
-		tini = (long) this.getArguments()[6];
+		tini = (long) this.getArguments()[7];
 		
 		//Get the ratio of sensoring for this agentCar
-		ratio = (int) this.getArguments()[7];
+		ratio = (int) this.getArguments()[8];
 		
 		//Get the desired Path from the origin to the destination
 		this.path = alg.getPath(this.map, getInitialIntersection(), 

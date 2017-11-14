@@ -141,5 +141,5 @@ newCar,08:00,I-A1-0,I-A1-5,105,smartest
 newCar,08:00,I-A1-0,I-A1-5,116,fastest
 newCar,08:00,I-A1-0,I-A1-5,116,fastest
 newCar,08:00,I-A1-0,I-A1-5,116,fastest
-newTruck,08:12,I-A1-0,I-A1-5,90,fastest
-newTruck,08:13,I-A1-0,I-A1-5,90,fastest
+newTruck,08:02,I-A1-0,I-A1-5,90,fastest,350
+newTruck,08:03,I-A1-0,I-A1-5,90,fastest,400
