@@ -14,10 +14,17 @@ import trafficData.TrafficData;
 import trafficData.TrafficDataInStore;
 import trafficData.TrafficDataOutStore;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+
 import org.jgrapht.graph.DefaultDirectedWeightedGraph;
 import org.json.JSONObject;
 
 import behaviours.TruckBehaviour;
+import environment.Area;
 import environment.Intersection;
 import environment.Map;
 import environment.Path;
@@ -45,7 +52,12 @@ public class TruckAgent extends Agent {
 	private float AreaX=317, AreaY=304;
 	
 	//Favourite area list
+	private ArrayList<Area> favouriteAreas;
 	//TODO
+	
+	//MaxDistance the truck can cover without stopping
+	double maxDistanceToGo = 0;
+	double distanceCovered = 0;
 	
 	private int direction;
 	private int ratio;
@@ -58,7 +70,8 @@ public class TruckAgent extends Agent {
 	private Map map;
 	private Path path;
 	private Segment currentSegment;
-	private String initialIntersection, finalIntersection;
+	private String initialIntersection, finalIntersection;	//Origin of the truck and final destination
+	private String actualDestination; 		//Where the truck is heading NOW
 	private boolean specialColor = false;
 	private Algorithm alg;
 	private int algorithmType;
@@ -97,7 +110,8 @@ public class TruckAgent extends Agent {
 		}
 		
 		//Is necessary draw the gui
-		this.drawGUI = (boolean) this.getArguments()[5];
+		this.drawGUI = (boolean) this.getArguments()[6];
+		this.maxDistanceToGo = (double) this.getArguments()[4];
 
 		//Get the map from an argument
 		this.map = (Map) this.getArguments()[0];
@@ -114,7 +128,7 @@ public class TruckAgent extends Agent {
 		AlgorithmFactory factory = new AlgorithmFactory();
 		this.alg = null;
 		
-		String routeType = (String) this.getArguments()[4];
+		String routeType = (String) this.getArguments()[5];
 		
 		if (routeType.equals("fastest")) {
 			
@@ -129,10 +143,10 @@ public class TruckAgent extends Agent {
 		}
 		
 		//Get the initial time tick from eventManager
-		tini = (long) this.getArguments()[6];
+		tini = (long) this.getArguments()[7];
 		
 		//Get the ratio of sensoring for this agentCar
-		ratio = (int) this.getArguments()[7];
+		ratio = (int) this.getArguments()[8];
 		
 		//Get the desired Path from the origin to the destination
 		this.path = alg.getPath(this.map, getInitialIntersection(), 
@@ -251,6 +265,103 @@ public class TruckAgent extends Agent {
 		//addBehaviour(new CarReceivingDataBehaviour(this));
 
 	}
+	
+	private double getDistanceToArea(Area area) {
+		double distance = 0;
+		
+		Path path = alg.getPath(map, currentSegment.getOrigin().getId(), area.getLocationSegment().getDestination().getId(), this.maxSpeed);
+		
+		for(Segment seg : path.getSegmentPath()) {
+			
+			distance+= seg.getLength();
+			
+			//Tenemos en cuenta la distancia desde la posición actual del camión hasta el inicio del segmento (intersección)
+			if(seg.getId().equals(currentSegment.getId())) {
+				double ini = currentSegment.getPkIni();
+				double pos = this.currentPk;
+				
+				distance -= Math.abs(ini-pos);
+			}
+			
+			//Tenemos en cuenta la distancia entre el are y el final de su segmento (intersección)
+			if(seg.getId().equals(area.getLocationSegment().getId())){
+				double fin = area.getLocationSegment().getPkIni()+area.getLocationSegment().getLength();
+				double areaPos = area.getLocationPK();
+				
+				distance -= Math.abs(fin-areaPos);	
+			}	
+		}
+		return distance;
+	}
+	
+	
+	/**
+	 * Generates and sets a favourite list of areas for the truck
+	 * 
+	 * @param List of existing areas
+	 */
+	public void generateFavouriteAreas(ArrayList<Area> areas) {
+		
+		ArrayList<Area> preferences = new ArrayList<Area>();
+		HashMap<Double,Area> bag = new HashMap<Double,Area>(); 
+		
+		
+		for(Area a:areas) {
+			//Filtramos aquellas Areas inalcanzables
+			if((this.maxDistanceToGo-this.distanceCovered)>=this.getDistanceToArea(a))
+				bag.put(this.getDistanceToArea(a), a);
+		}
+		
+		Set keySet = (Set) bag.keySet();
+		ArrayList list = new ArrayList(keySet);     
+		Collections.sort(list);
+		
+		for(int i = 0; i<3 && i<list.size(); i++) {
+			preferences.add(bag.get(list.get(i)));
+		}
+		//TODO TESTIIIIIINGGGGGGGGGGG correct order
+		
+		
+		
+		this.favouriteAreas = preferences;
+	}
+	
+	/**
+	 * Returns the distance to cover all the segments in a list
+	 * 
+	 * @param List of segments to drive through
+	 */
+	public double calculateDistanceFromSegments(List<Segment> list) {
+		double dist=0;
+
+		for(Segment s: list) {
+			dist+=s.getLength();
+		}
+		return dist;
+	}
+	
+	/**
+	 * Generates and sets a favourite list of areas for the truck
+	 * 
+	 * @param List of existing areas
+	 */
+	public void findActualDestination() {
+		//TODO
+		double dist=0;
+		Path roadToDestination = alg.getPath(this.map, getInitialIntersection(),getFinalIntersection(),this.maxSpeed);
+		
+		
+		dist  = calculateDistanceFromSegments(roadToDestination.getSegmentPath());
+		
+		if(dist>(this.maxDistanceToGo-distanceCovered)) {
+			System.err.println("JAJAJAJ");
+		}
+		
+		
+	}
+	
+	
+	
 	
 	/**
 	 * Recalculate the route, this will be called from the behaviour 

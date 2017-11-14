@@ -103,11 +103,11 @@ public class AreaAgent extends Agent{
 		return true;
 	}
 
-	public void doDereserve(String truckName){
+	public void doUnreserve(String truckName){
 		//Realizar la dereserva
 	}
 
-	public void doIllegalReserve(String truckName){
+	public void doIllegalParking(String truckName){
 		// Realizar la reserva ilegal
 	}
 

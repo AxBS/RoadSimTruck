@@ -122,6 +122,7 @@ public class EventManagerBehaviour extends CyclicBehaviour {
 										new Object[] { this.agent.getMap(),
 												/* IntOrigin, IntDest */ parts[2], parts[3],
 												/* maxSpeed truck */ 	 Integer.parseInt(parts[4]),
+												/* max km to go*/		 Double.parseDouble(parts[6]),
 												/* alg type */ 			 parts[5],
 												/* drawGUI */ 			 this.drawGUI,
 												/* Initial time */ 		 currentTick,

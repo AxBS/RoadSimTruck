@@ -57,10 +57,10 @@ public class AreaBehaviour extends CyclicBehaviour {
 					msgAreaResponse.setContent("false");
 				}
 				this.areaAgent.send(msgAreaResponse);
-			} else if (msg.getOntology().equals("desreserveOntology")){
-				this.areaAgent.doDereserve(msg.getContent());
-			} else if (msg.getOntology().equals("illegalReserveOntology")){
-				this.areaAgent.doIllegalReserve(msg.getContent());
+			} else if (msg.getOntology().equals("unreserveOntology")){
+				this.areaAgent.doUnreserve(msg.getContent());
+			} else if (msg.getOntology().equals("illegalParkingOntology")){
+				this.areaAgent.doIllegalParking(msg.getContent());
 			}
 		}
 		
