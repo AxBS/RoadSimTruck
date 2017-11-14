@@ -240,19 +240,19 @@ public class Map implements Serializable {
 				while(line != null){
 
 					JSONObject area = new JSONObject(line);
+					
+					String areaID = (String) area.get("intersection");
+					
+					Intersection intersection = intersectionsAux.get(areaID);
 
-					//The area the step belongs to
-					String idSegment = area.getString("idSegment");
 
-					//Create the step
-					Area a = new Area(area.getJSONObject("coordinates").getInt("x"),
-							area.getJSONObject("coordinates").getInt("y"), area.getInt("pk"),
-						segmentsAux.get(idSegment), area.getInt("capacity"), area.getString("id"), areaContainer);
+					//Create the AREA
+					Area a = new Area(intersection ,area.getInt("capacity"), area.getString("id"), areaContainer);
 
 					//Add the steps to the segment
 					listAreas.add(a);				
 
-					line = stepsReader.readLine();
+					line = areaReader.readLine();
 				}
 				
 				

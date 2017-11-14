@@ -269,7 +269,7 @@ public class TruckAgent extends Agent {
 	private double getDistanceToArea(Area area) {
 		double distance = 0;
 		
-		Path path = alg.getPath(map, currentSegment.getOrigin().getId(), area.getLocationSegment().getDestination().getId(), this.maxSpeed);
+		Path path = alg.getPath(map, currentSegment.getOrigin().getId(), area.getIntersection().getId(), this.maxSpeed);
 		
 		for(Segment seg : path.getSegmentPath()) {
 			
@@ -282,14 +282,6 @@ public class TruckAgent extends Agent {
 				
 				distance -= Math.abs(ini-pos);
 			}
-			
-			//Tenemos en cuenta la distancia entre el are y el final de su segmento (intersección)
-			if(seg.getId().equals(area.getLocationSegment().getId())){
-				double fin = area.getLocationSegment().getPkIni()+area.getLocationSegment().getLength();
-				double areaPos = area.getLocationPK();
-				
-				distance -= Math.abs(fin-areaPos);	
-			}	
 		}
 		return distance;
 	}

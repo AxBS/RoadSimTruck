@@ -458,10 +458,10 @@ public class CanvasWorld extends JFrame
 					
 					g.setColor(Color.BLUE);
 					
-					oval.setFrame((double)a.getLocationX()-2, (double)a.getLocationY()-2, 6, 6);
+					oval.setFrame((double)a.getIntersection().getX()-2, (double)a.getIntersection().getY()-2, 6, 6);
 					g.fill(oval);
-					g.drawString(a.getId(),a.getLocationX()-2, a.getLocationY()-2);
-					g.drawString("Capacidad: "+ a.getCapacity(),a.getLocationX()+2, a.getLocationY()+2);
+					g.drawString(a.getId(),a.getIntersection().getX()-2, a.getIntersection().getY()-2);
+					g.drawString("Capacidad: "+ a.getCapacity(),a.getIntersection().getX()+2, a.getIntersection().getY()+2);
 				}
 			}
 		

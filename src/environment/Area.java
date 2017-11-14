@@ -7,9 +7,11 @@ import jade.wrapper.StaleProxyException;
 public class Area {
 
 	//Location of the Area
-	private int locationX, locationY;
-	private float locationPK;
-	private Segment locationSegment;
+//	private int locationX, locationY;
+//	private float locationPK;
+//	private Segment locationSegment;
+	
+	private Intersection intersection;
 	
 	//Capacity
 	private int capacity;
@@ -28,12 +30,9 @@ public class Area {
 	private AreaAgent areaAgent;
 	
 
-	public Area(int locationX, int locationY, float locationPK, Segment locationSegment, int capacity, String id, jade.wrapper.AgentContainer areaContainer ) {
+	public Area(Intersection intersection, int capacity, String id, jade.wrapper.AgentContainer areaContainer ) {
 		
-		this.locationX = locationX;
-		this.locationY = locationY;
-		this.locationPK = locationPK;
-		this.locationSegment = locationSegment;
+		this.intersection =intersection;
 		this.capacity = capacity;
 		this.id = id;
 		this.areaContainer = areaContainer;
@@ -59,83 +58,68 @@ public class Area {
 
 	public Area() {
 		
-		this.locationX = 0;
-		this.locationY = 0;
-		this.locationPK = 0.0f;
-		this.locationSegment = new Segment();
+		this.intersection = new Intersection();
 		this.capacity = 0;
 		this.id = "defaultID";
 	}
 
-	public int getLocationX() {
-		return locationX;
+
+	
+	
+	
+	public Intersection getIntersection() {
+		return intersection;
 	}
 
-	public void setLocationX(int locationX) {
-		this.locationX = locationX;
+
+	public void setIntersection(Intersection intersection) {
+		this.intersection = intersection;
 	}
 
-	public int getLocationY() {
-		return locationY;
-	}
-
-	public void setLocationY(int locationY) {
-		this.locationY = locationY;
-	}
-
-	public float getLocationPK() {
-		return locationPK;
-	}
-
-	public void setLocationPK(float locationPK) {
-		this.locationPK = locationPK;
-	}
-
-	public Segment getLocationSegment() {
-		return locationSegment;
-	}
-
-	public void setLocationSegment(Segment locationSegment) {
-		this.locationSegment = locationSegment;
-	}
 
 	public int getCapacity() {
 		return capacity;
 	}
 
+
 	public void setCapacity(int capacity) {
 		this.capacity = capacity;
 	}
+
 
 	public String getId() {
 		return id;
 	}
 
+
 	public void setId(String id) {
 		this.id = id;
 	}
 
-	
+
 	public boolean isDrawGUI() {
 		return drawGUI;
 	}
+
 
 	public void setDrawGUI(boolean drawGUI) {
 		this.drawGUI = drawGUI;
 	}
 
+
 	public AreaAgent getAreaAgent() {
 		return areaAgent;
 	}
 
+
 	public void setAreaAgent(AreaAgent areaAgent) {
 		this.areaAgent = areaAgent;
 	}
-	
+
+
 	@Override
 	public String toString() {
-		return "Area [locationX=" + locationX + ", locationY=" + locationY + ", locationPK=" + locationPK
-				+ ", locationSegment=" + locationSegment + ", capacity=" + capacity + ", id=" + id + "]";
+		return "Area [locationX=" + intersection.getX()+ ", locationY=" + intersection.getY() + ", capacity=" + capacity + ", id=" + id + "]";
 	}
 	
 	

@@ -40,9 +40,10 @@ public class AreaBehaviour extends CyclicBehaviour {
 		ACLMessage msgAreaResponse =
 				new ACLMessage(ACLMessage.INFORM);
 
-		msgAreaResponse.addReceiver(msg.getSender());
+		
 
 		if(msg != null){
+			msgAreaResponse.addReceiver(msg.getSender());
 			if (msg.getOntology().equals("prereserveOntology")){
 				if(this.areaAgent.doPrereserve(msg.getContent())){
 					msgAreaResponse.setContent("true");
