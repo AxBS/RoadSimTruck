@@ -1,4 +1,4 @@
-package behavioursAreas;
+package behaviours;
 
 import java.io.FileWriter;
 import java.io.PrintWriter;
@@ -77,7 +77,7 @@ public class NegociacionAreaBehaviour extends Behaviour{
 			else // YA NO ENTRARA NUNCA
 			{					
 				System.out.println("NEGOCIACION: " + idNegociacion + " SIN SOLUCION");
-				System.out.println("Vehículo " + lstVehiculos.get(lstVehiculos.size()-1) + " aparca sin reserva en Area " + area.getLocalName());
+				System.out.println("Vehï¿½culo " + lstVehiculos.get(lstVehiculos.size()-1) + " aparca sin reserva en Area " + area.getLocalName());
 			}						
 			step = 10;
 			break;
@@ -86,8 +86,8 @@ public class NegociacionAreaBehaviour extends Behaviour{
 		
 	}
 	
-	//Modificado para modificar reservas según la negociación
-	//Al resto de vehículos se les cancela la reserva para que negocien
+	//Modificado para modificar reservas segï¿½n la negociaciï¿½n
+	//Al resto de vehï¿½culos se les cancela la reserva para que negocien
 	//Con la siguiente area
 	private void EnviarNuevasReservas() {
 		HashMap<String, ArrayList<String>> soluciones = new HashMap<String, ArrayList<String>>();
@@ -97,7 +97,7 @@ public class NegociacionAreaBehaviour extends Behaviour{
 			
 			if (solucionGanadora.size() != lstVehiculos.size())
 			{
-				System.err.println("====>> ATENCION!!!! la lista de la solucion no coincide con la de los vehículos");
+				System.err.println("====>> ATENCION!!!! la lista de la solucion no coincide con la de los vehï¿½culos");
 				System.err.println("Lista de la solucion: " + solucionGanadora.size());
 				System.err.println("Lista de vehiculos  : " + lstVehiculos.size());
 			}
@@ -120,7 +120,7 @@ public class NegociacionAreaBehaviour extends Behaviour{
 			
 		
 		area.delLstReservas();
-		// Añado al area todos los vehiculos en la lista de soluciones
+		// Aï¿½ado al area todos los vehiculos en la lista de soluciones
 		for (String v : soluciones.get(area.getLocalName())) {
 			if (!area.getLstReservas().contains(v.toString().trim()))
 				area.getLstReservas().add(v.toString().trim());						
@@ -134,7 +134,7 @@ public class NegociacionAreaBehaviour extends Behaviour{
 		msg.setContent("");
 			
 		// Enviamos un mensaje al vehiculo al que se le cancela la reserva
-		// Tambien al que se le acepta la reserva, si es el último (el que lo solicitó)
+		// Tambien al que se le acepta la reserva, si es el ï¿½ltimo (el que lo solicitï¿½)
 		
 		for (int i = 0; i < lstVehiculos.size(); i++) {
 			msg.clearAllReceiver();
@@ -201,9 +201,9 @@ public class NegociacionAreaBehaviour extends Behaviour{
 				lstPreferidas.remove(0);
 			}
 			if (lstPreferidas.isEmpty())
- 				System.out.println("=====>>>>>  Vehiculo: " + msg.getSender() + " devuelve la lista de preferidas está vacía");
+ 				System.out.println("=====>>>>>  Vehiculo: " + msg.getSender() + " devuelve la lista de preferidas estï¿½ vacï¿½a");
 /* 			
-			//Ahora me cargo el resto de preferencias y dejo solo el área en cuestión
+			//Ahora me cargo el resto de preferencias y dejo solo el ï¿½rea en cuestiï¿½n
 			while (lstPreferidas.size() > 1)
 			{
 				lstPreferidas.remove(1);
@@ -228,7 +228,7 @@ public class NegociacionAreaBehaviour extends Behaviour{
 		
 		System.out.println("Se negocia por: " + area.getLocalName());
 		System.out.println("Num areas alcanzables " + lstAreasAlcanzables);
-		System.out.println("Numero de vehículos " + lstVehiculos.size());
+		System.out.println("Numero de vehï¿½culos " + lstVehiculos.size());
 		System.out.println("Num areas preferidas " + preferencias);
 		if (preferencias.size() != lstVehiculos.size())
 			System.err.println("====>>>  ATENCION: Lista de preferencias incompleta.");
@@ -283,7 +283,7 @@ public class NegociacionAreaBehaviour extends Behaviour{
 			}
 		}
 
-		System.out.println("Nº de solu factibles = " + lstSolucionesFactibles.size());
+		System.out.println("Nï¿½ de solu factibles = " + lstSolucionesFactibles.size());
 		System.out.println("Calculando Pesos Votos de las soluciones ... " + lstSolucionesFactibles.size());
 		if (!lstSolucionesFactibles.isEmpty()) {
 			
@@ -318,8 +318,8 @@ public class NegociacionAreaBehaviour extends Behaviour{
 		
 		strAreas.setLength(0);
 		strPesos.setLength(0);
-		strAreas.append("Negociación por Area: " + area.getLocalName() + ". Id Negociacion: " + idNegociacion + "\n");
-		strPesos.append("Negociación por Area: " + area.getLocalName() + ". Id Negociacion: " + idNegociacion + "\n");
+		strAreas.append("Negociaciï¿½n por Area: " + area.getLocalName() + ". Id Negociacion: " + idNegociacion + "\n");
+		strPesos.append("Negociaciï¿½n por Area: " + area.getLocalName() + ". Id Negociacion: " + idNegociacion + "\n");
 		
 		//para mostrar en los los vehiculos implicados
 		for (int i = 0; i < lstVehiculos.size(); i++){
@@ -391,8 +391,8 @@ public class NegociacionAreaBehaviour extends Behaviour{
 		
 		strAreas.setLength(0);
 		strPesos.setLength(0);
-		strAreas.append("Negociación por Area: " + area.getLocalName() + ". Id Negociacion: " + idNegociacion + "\n");
-		strPesos.append("Negociación por Area: " + area.getLocalName() + ". Id Negociacion: " + idNegociacion + "\n");
+		strAreas.append("Negociaciï¿½n por Area: " + area.getLocalName() + ". Id Negociacion: " + idNegociacion + "\n");
+		strPesos.append("Negociaciï¿½n por Area: " + area.getLocalName() + ". Id Negociacion: " + idNegociacion + "\n");
 		
 		//para mostrar en los los vehiculos implicados
 		for (int i = 0; i < lstVehiculos.size(); i++){
@@ -464,8 +464,8 @@ public class NegociacionAreaBehaviour extends Behaviour{
 		
 		strAreas.setLength(0);
 		strPesos.setLength(0);
-		strAreas.append("Negociación por Area: " + area.getLocalName() + ". Id Negociacion: " + idNegociacion + "\n");
-		strPesos.append("Negociación por Area: " + area.getLocalName() + ". Id Negociacion: " + idNegociacion + "\n");
+		strAreas.append("Negociaciï¿½n por Area: " + area.getLocalName() + ". Id Negociacion: " + idNegociacion + "\n");
+		strPesos.append("Negociaciï¿½n por Area: " + area.getLocalName() + ". Id Negociacion: " + idNegociacion + "\n");
 		
 		//para mostrar los vehiculos implicados
 		for (int i = 0; i < lstVehiculos.size(); i++){

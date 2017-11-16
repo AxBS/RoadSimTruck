@@ -28,9 +28,15 @@ public class AreaAgent extends Agent{
 	private ArrayList<String> lstPreReservas;			// Guarda el nombre de los vehiculos pre-reservados
 	private ArrayList<String> lstIlegales;			// Guarda el nombre del vehículo que aparca sin reserva
 	private ArrayList<String> parking;					// Guarda el nombre del vehiculo que ocupa una plaza
+	private ArrayList<ACLMessage> bufferNegociaciones; //Buffer con las negociaciones no acabadas
 	private DFAgentDescription interfaceAgent;
 	
 	private boolean drawGUI;
+
+	// Como pueden haber varias resefvas a la vez hemos de
+	// tener cuidado con la distribución de las reservas
+	private boolean estadoNegociacion = false;
+	private int numTotalNegociaciones;
 
 	protected void setup(){
 		
@@ -63,7 +69,8 @@ public class AreaAgent extends Agent{
 		this.lstReservas = new ArrayList<String>();
 		this.parking = new ArrayList<String>();
 		this.lstIlegales = new ArrayList<String>();
-
+		this.numTotalNegociaciones = 0;
+		this.bufferNegociaciones = new ArrayList<ACLMessage>();
 		if(this.drawGUI){
 			//Find the interface agent
 			dfd = new DFAgentDescription();
@@ -159,6 +166,36 @@ public class AreaAgent extends Agent{
 	public void setDrawGUI(boolean drawGUI) {
 		this.drawGUI = drawGUI;
 	}
-	
-	
+
+	public boolean isNegociando() {
+		return estadoNegociacion;
+	}
+
+	public void setEstadoNegociacion(boolean estadoNegociacion) {
+		this.estadoNegociacion = estadoNegociacion;
+	}
+
+	public ArrayList<ACLMessage> getBufferNegociaciones() {
+		return bufferNegociaciones;
+	}
+
+	public void setBufferNegociaciones(ArrayList<ACLMessage> bufferNegociaciones) {
+		this.bufferNegociaciones = bufferNegociaciones;
+	}
+
+	public int getNumTotalNegociaciones() {
+		return numTotalNegociaciones;
+	}
+
+	public void setNumTotalNegociaciones(int numTotalNegociaciones) {
+		this.numTotalNegociaciones = numTotalNegociaciones;
+	}
+
+	public void addNegociacion(ACLMessage msg){
+		this.bufferNegociaciones.add(msg);
+	}
+
+	public void incNumeroTotalNegociaciones(){
+		this.numTotalNegociaciones++;
+	}
 }
