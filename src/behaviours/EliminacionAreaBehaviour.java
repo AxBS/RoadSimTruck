@@ -1,10 +1,15 @@
 package behaviours;
 
 import java.io.IOException;
+import java.io.StringReader;
+import java.util.ArrayList;
+
 import jade.core.AID;
 import jade.core.behaviours.OneShotBehaviour;
+import jade.lang.acl.ACLCodec;
 import jade.lang.acl.ACLMessage;
 import agents.AreaAgent;
+import jade.lang.acl.StringACLCodec;
 
 /**
  * Este comportamiento elimina un areaAgent y lanza a los camiones para que lleguen a
@@ -28,9 +33,13 @@ public class EliminacionAreaBehaviour extends OneShotBehaviour{
 		//limpiarChartOne();
 		
 		//reiniciarAreas();
-		
-		reubicarVehiculos();
-		
+
+		try {
+			reubicarVehiculos();
+		} catch (ACLCodec.CodecException e) {
+			System.out.println("Fallo en la reubicación de vehiculos");
+		}
+
 		mostrarPanelParaReactivar();
 		
 		//Elimino el areaAgent
@@ -91,19 +100,25 @@ public class EliminacionAreaBehaviour extends OneShotBehaviour{
 		}
 	}*/
 	
-	private void reubicarVehiculos(){
-		AID[] vehicles;
+	private void reubicarVehiculos() throws ACLCodec.CodecException {
+		ArrayList<AID> vehicles = new ArrayList<AID>();
 
-		//Coger todos los coches que estén dentro del parking, prereservados o reservados
+		//TODO:Coger todos los coches que estén dentro del parking, prereservados o reservados
 		// hacer que recalculen su destino y si no tienen kilometraje que se queden ahí
-		vehicles = this.areaAgent.getLstPreReservas()
+		for(String s: this.areaAgent.getLstPreReservas()){
+			StringACLCodec codec = new StringACLCodec(new StringReader(s), null);
+			AID aid_rec = codec.decodeAID();
+			vehicles.add(aid_rec);
+		}
+
 		if (vehicles == null) {			
 			System.out.println("ATENCION!!!!!! NO HAY AGENTES. Estoy en APIRReactivationAreaBehaviour");
 		}
 		else
 		{
 			ACLMessage msg = new ACLMessage(ACLMessage.CFP);
-			msg.setConversationId(TipoMensaje.ELIMINAR_RESERVAS);
+			//TODO: NO tengo claro si son las reservas o las prereservas
+			msg.setOntology("removePrereservesOntology");
 			msg.setPerformative(ACLMessage.CANCEL);
 			int i = 0;
 			for (AID v : vehicles) 	
@@ -120,7 +135,7 @@ public class EliminacionAreaBehaviour extends OneShotBehaviour{
 				myAgent.send(msg);
 			}
 			System.out.println("!!!!!! Acabo de limpiar: " + i + "vehiculos");
-			System.out.println("!!!!!! vehicles es: " + vehicles.length + "vehiculos");
+			System.out.println("!!!!!! vehicles es: " + vehicles.size() + "vehiculos");
 			
 		}
 		

@@ -18,10 +18,12 @@ public class AreaBehaviour extends CyclicBehaviour {
 	MessageTemplate mt =  MessageTemplate.or(
 			MessageTemplate.or(
 			MessageTemplate.or(
+			MessageTemplate.or(
 			MessageTemplate.MatchOntology("prereserveOntology"),
 			MessageTemplate.MatchOntology("reserveOntology")),
-			MessageTemplate.MatchOntology("desreserveOntology")),
-			MessageTemplate.MatchOntology("illegalReserveOntology"));
+			MessageTemplate.MatchOntology("parkingOntology")),
+			MessageTemplate.MatchOntology("leavingParkingOntology")),
+			MessageTemplate.MatchOntology("illegalParkingOntology"));
 	private AreaAgent areaAgent;
 
 	private AID topic;
@@ -37,28 +39,51 @@ public class AreaBehaviour extends CyclicBehaviour {
 	public void action() {
 		//Receive the areaAgent instruction
 		ACLMessage msg = myAgent.receive(mt);
-		ACLMessage msgAreaResponse =
-				new ACLMessage(ACLMessage.INFORM);
+		ACLMessage msgtmp;
 
 		if(msg != null){
-			msgAreaResponse.addReceiver(msg.getSender());
 			if (msg.getOntology().equals("prereserveOntology")){
-
-				this.areaAgent.addBehaviour(new RecepcionPrereservasBehaviour(this.areaAgent,msg));
+				if (areaAgent.isNegociando())
+				{
+					System.out.println("Ya hay negociacion en area: " + areaAgent.getLocalName());
+					areaAgent.getBufferNegociaciones().add(msg);
+					System.out.println("Apilo la reserva para " + areaAgent.getLocalName() + " del vehiculo " + msg.getSender().getLocalName() + " La cola es: " + areaAgent.getBufferNegociaciones().size());
+				}
+				else {
+					areaAgent.setEstadoNegociacion(true);
+					this.areaAgent.addBehaviour(new RecepcionPrereservasBehaviour(this.areaAgent, msg));
+				}
 
 			} else if (msg.getOntology().equals("reserveOntology")){
-				if(this.areaAgent.doReserve(msg.getContent())){
-					msgAreaResponse.setContent("true");
-				} else {
-					msgAreaResponse.setContent("false");
-				}
-				this.areaAgent.send(msgAreaResponse);
-			} else if (msg.getOntology().equals("unreserveOntology")){
-				this.areaAgent.doUnreserve(msg.getContent());
+
+				this.areaAgent.addBehaviour(new RecepcionReservasBehaviour(this.areaAgent, msg));
+
+			} else if (msg.getOntology().equals("parkingOntology")){
+
+				this.areaAgent.getParking().add(msg.getSender().getLocalName());
+				this.areaAgent.getLstReservas().remove(msg.getSender().getLocalName());
+
+			} else if (msg.getOntology().equals("leavingParkingOntology")){
+
+				this.areaAgent.getParking().remove(msg.getSender().getLocalName());
+
 			} else if (msg.getOntology().equals("illegalParkingOntology")){
-				this.areaAgent.doIllegalParking(msg.getContent());
+
+				this.areaAgent.doIllegalParking(msg.getSender().getLocalName());
 			}
 		}
+		else if (areaAgent.getBufferNegociaciones().size() > 0)
+		{
+			if (!areaAgent.isNegociando()){
+				areaAgent.setEstadoNegociacion(true);
+				msgtmp = areaAgent.getBufferNegociaciones().get(0);
+				areaAgent.getBufferNegociaciones().remove(0);
+				System.out.println("Se DESapila AREA: " + areaAgent.getLocalName() + " VEHICULO: " + msgtmp.getSender().getLocalName() + " QUEDAN: " + areaAgent.getBufferNegociaciones().size());
+				areaAgent.addBehaviour(new RecepcionPrereservasBehaviour(areaAgent, msgtmp));
+			}
+		}
+		else
+			block();
 		
 	}
 	

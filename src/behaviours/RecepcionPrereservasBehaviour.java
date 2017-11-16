@@ -28,10 +28,10 @@ public class RecepcionPrereservasBehaviour extends OneShotBehaviour{
 		// Se puede reservar si las reservas + los trucks aparcados son < que los tracks que caben
 		if (area.getLstReservas().size() + area.getParking().size() < area.getArea().getCapacity()) {
 			
-			// Anyado el agente a la reserva
-			area.getLstReservas().add(msg.getSender().getLocalName());
+			// Anyado el agente a la prereserva
+			area.getLstPreReservas().add(msg.getSender().getLocalName());
 			reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);			
-			System.out.println(area.getArea().getId() + " CONFIRMA reserva de " + msg.getSender().getLocalName() + "Ahora estan: " + area.getLstReservas() );
+			System.out.println(area.getArea().getId() + " CONFIRMA PREreserva de " + msg.getSender().getLocalName() + "Ahora estan: " + area.getLstPreReservas() );
 			area.setEstadoNegociacion(false);
 		}		
 		//Empieza proceso negociacion

@@ -20,6 +20,7 @@ public class EliminacionReservasAreaBehaviour extends OneShotBehaviour{
 	public void action() {
 		
 		((AreaAgent) myAgent).deleteBufferNegociaciones();
+		((AreaAgent) myAgent).deleteLstPrereservas();
 		((AreaAgent) myAgent).deleteLstReservas();
 		((AreaAgent) myAgent).deleteLstSinReservas();
 		((AreaAgent) myAgent).deleteParking();

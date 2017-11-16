@@ -198,4 +198,20 @@ public class AreaAgent extends Agent{
 	public void incNumeroTotalNegociaciones(){
 		this.numTotalNegociaciones++;
 	}
+
+	public void deleteLstPrereservas(){
+		this.lstPreReservas.clear();
+	}
+	public void deleteBufferNegociaciones(){
+		this.bufferNegociaciones.clear();
+	}
+	public void deleteLstReservas(){
+		this.lstReservas.clear();
+	}
+	public void deleteLstSinReservas(){
+		this.lstIlegales.clear();
+	}
+	public void deleteParking(){
+		this.parking.clear();
+	}
 }

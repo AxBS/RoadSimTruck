@@ -8,8 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
-import others.TipoMensaje;
-import others.Util;
 import agents.AreaAgent;
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
