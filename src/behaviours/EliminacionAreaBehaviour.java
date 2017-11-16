@@ -1,56 +1,55 @@
-package behavioursAreas;
+package behaviours;
 
 import java.io.IOException;
-import model.Marker;
-import others.TipoMensaje;
-import others.Util;
-import others.teTiposAgentes;
 import jade.core.AID;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import agents.AreaAgent;
 
 /**
- * This behaviour sends a Marker, Route and Polyline to the API.
- * This is for demo purposes only.
+ * Este comportamiento elimina un areaAgent y lanza a los camiones para que lleguen a
+ * otra areaAgent, es decir se reposicionan
  *
  */
 public class EliminacionAreaBehaviour extends OneShotBehaviour{
 
 	private static final long serialVersionUID = 3793363950076294714L;
-	private AreaAgent area;
+	private AreaAgent areaAgent;
 	
 	
 	public EliminacionAreaBehaviour(AreaAgent a){
 		
-		area = a;
+		areaAgent = a;
 	}
 
 	@Override
 	public void action() {
 		
-		limpiarChartOne();
+		//limpiarChartOne();
 		
-		reiniciarAreas();
+		//reiniciarAreas();
 		
 		reubicarVehiculos();
 		
 		mostrarPanelParaReactivar();
 		
-		//Elimino el area
+		//Elimino el areaAgent
 		myAgent.doDelete();
 		
 	}
-	
-	private void limpiarChartOne(){
+
+	/**
+	 * TODO: No nos hace falta este mÃ©todo porque no tenemos ningÃºn grÃ¡fico que limpiar
+	 * */
+	/*private void limpiarChartOne(){
 		
-		System.out.println("Voy a limpiar el gráfico 1");
+		System.out.println("Voy a limpiar el grÃ¡fico 1");
 		
-		//Creo el mensaje y lo envío al GUI para actualizar el gráfico
+		//Creo el mensaje y lo envio al GUI para actualizar el grafico
 		ACLMessage messageGraf = new ACLMessage(ACLMessage.INFORM);
 		messageGraf.setOntology("deleteChartOne");
-		messageGraf.setConversationId(TipoMensaje.ENVIAR_OCUPACION);
-		messageGraf.setReplyWith(TipoMensaje.ENVIAR_OCUPACION + "-" + myAgent.getLocalName());
+		//messageGraf.setConversationId(TipoMensaje.ENVIAR_OCUPACION);
+		//messageGraf.setReplyWith(TipoMensaje.ENVIAR_OCUPACION + "-" + myAgent.getLocalName());
 		messageGraf.setContent("");
 						
 		//Sets the agent to send by name
@@ -58,9 +57,12 @@ public class EliminacionAreaBehaviour extends OneShotBehaviour{
 
 		//Actually send it
 		myAgent.send(messageGraf);
-	}					
-	
-	private void reiniciarAreas(){
+	}*/
+
+	/**
+	 * TODO: No veo en que nos puede ser Ãºtil este mÃ©todo
+	 * */
+	/*private void reiniciarAreas(){
 		AID[] areas;
 		
 		areas = Util.LocalizarAgentes(myAgent, teTiposAgentes.Areas);
@@ -87,12 +89,14 @@ public class EliminacionAreaBehaviour extends OneShotBehaviour{
 			}
 			System.out.println("!!!!!! Acabo de limpiar: " + i + "areas");
 		}
-	}
+	}*/
 	
 	private void reubicarVehiculos(){
 		AID[] vehicles;
-		
-		vehicles = Util.LocalizarAgentes(myAgent, teTiposAgentes.Vehiculos);
+
+		//Coger todos los coches que estÃ©n dentro del parking, prereservados o reservados
+		// hacer que recalculen su destino y si no tienen kilometraje que se queden ahÃ­
+		vehicles = this.areaAgent.getLstPreReservas()
 		if (vehicles == null) {			
 			System.out.println("ATENCION!!!!!! NO HAY AGENTES. Estoy en APIRReactivationAreaBehaviour");
 		}
@@ -121,15 +125,18 @@ public class EliminacionAreaBehaviour extends OneShotBehaviour{
 		}
 		
 	}
-		
+
+	/**
+	 * Muestra el panel para poder reactivar el area deshabilitada y que los coches puedan volver a considerarla
+	 * */
 	private void mostrarPanelParaReactivar(){
-	    // Mandamos el mensaje al GUI para mostrar el mensaje de ocupación
+	    /*// Mandamos el mensaje al GUI para mostrar el mensaje de ocupaciï¿½n
 		
 		//Prepare the message
 		ACLMessage message = new ACLMessage(ACLMessage.INFORM);
 
 		//**************************************************
-		// Añadimos la info del agente Area que ha invocado
+		// Aï¿½adimos la info del agente Area que ha invocado
 		// el comportamiento
 		//**************************************************
 		
@@ -146,7 +153,7 @@ public class EliminacionAreaBehaviour extends OneShotBehaviour{
 		
 		//Pasamos la informacion del panel en marker.informacion
 		//con cadenas, usando el separador -
-		// 0.Nombre del área,
+		// 0.Nombre del ï¿½rea,
 		// 1. Imagen izquierda
 		// 2. Imagen derecha
 		// 3. Numero de plazas libres
@@ -181,7 +188,7 @@ public class EliminacionAreaBehaviour extends OneShotBehaviour{
 
 		//Actually send it
 		myAgent.send(message);
-		System.out.println("====>>>>ENVIO DE INFO AL server: " + message.getReplyWith());
+		System.out.println("====>>>>ENVIO DE INFO AL server: " + message.getReplyWith());*/
 
 	}
 }
