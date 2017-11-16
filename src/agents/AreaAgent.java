@@ -26,7 +26,7 @@ public class AreaAgent extends Agent{
 	
 	private ArrayList<String> lstReservas;				// Guarda el nombre del vehiculo que reserva
 	private ArrayList<String> lstPreReservas;			// Guarda el nombre de los vehiculos pre-reservados
-	private ArrayList<String> lstSinReservas;			// Guarda el nombre del vehículo que aparca sin reserva
+	private ArrayList<String> lstIlegales;			// Guarda el nombre del vehículo que aparca sin reserva
 	private ArrayList<String> parking;					// Guarda el nombre del vehiculo que ocupa una plaza
 	private DFAgentDescription interfaceAgent;
 	
@@ -62,7 +62,7 @@ public class AreaAgent extends Agent{
 		this.lstPreReservas = new ArrayList<String>();
 		this.lstReservas = new ArrayList<String>();
 		this.parking = new ArrayList<String>();
-		this.lstSinReservas = new ArrayList<String>();
+		this.lstIlegales = new ArrayList<String>();
 
 		if(this.drawGUI){
 			//Find the interface agent
@@ -109,6 +109,56 @@ public class AreaAgent extends Agent{
 
 	public void doIllegalParking(String truckName){
 		// Realizar la reserva ilegal
+		this.lstIlegales.add(truckName);
 	}
 
+	public Area getArea() {
+		return area;
+	}
+
+	public void setArea(Area area) {
+		this.area = area;
+	}
+
+	public ArrayList<String> getLstReservas() {
+		return lstReservas;
+	}
+
+	public void setLstReservas(ArrayList<String> lstReservas) {
+		this.lstReservas = lstReservas;
+	}
+
+	public ArrayList<String> getLstPreReservas() {
+		return lstPreReservas;
+	}
+
+	public void setLstPreReservas(ArrayList<String> lstPreReservas) {
+		this.lstPreReservas = lstPreReservas;
+	}
+
+	public ArrayList<String> getLstIlegales() {
+		return lstIlegales;
+	}
+
+	public void setLstIlegales(ArrayList<String> lstIlegales) {
+		this.lstIlegales = lstIlegales;
+	}
+
+	public ArrayList<String> getParking() {
+		return parking;
+	}
+
+	public void setParking(ArrayList<String> parking) {
+		this.parking = parking;
+	}
+
+	public boolean isDrawGUI() {
+		return drawGUI;
+	}
+
+	public void setDrawGUI(boolean drawGUI) {
+		this.drawGUI = drawGUI;
+	}
+	
+	
 }

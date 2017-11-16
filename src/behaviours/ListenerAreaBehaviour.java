@@ -1,4 +1,4 @@
-package behavioursAreas;
+package behaviours;
 
 import others.TipoMensaje;
 import agents.AreaAgent;
@@ -37,7 +37,7 @@ public class ListenerAreaBehaviour extends CyclicBehaviour {
 				area.inc_Sol_Reservas();
 				if (area.getEstadoNegociacion())
 				{
-					System.out.println("Ya hay negociación en area: " + area.getLocalName());
+					System.out.println("Ya hay negociaciï¿½n en area: " + area.getLocalName());
 					area.getBufferNegociaciones().add(msg);
 					System.out.println("Apilo la reserva para " + area.getLocalName() + " del vehiculo " + msg.getSender().getLocalName() + " La cola es: " + area.getBufferNegociaciones().size());
 				}
@@ -51,7 +51,7 @@ public class ListenerAreaBehaviour extends CyclicBehaviour {
 				area.addBehaviour(new EnviarPosicionBehaviour(area.getPosicion(), msg));
 			}
 			else if (msg.getConversationId().equals(TipoMensaje.ELIMINACION_AREA)) {
-				System.out.println("Soy el área: " + area.getLocalName() + " Recibo " + msg.getContent() + "!!!!!!!!!!!!!!!!");
+				System.out.println("Soy el ï¿½rea: " + area.getLocalName() + " Recibo " + msg.getContent() + "!!!!!!!!!!!!!!!!");
 				area.addBehaviour(new EliminacionAreaBehaviour(area));
 			}
 			else if (msg.getConversationId().equals(TipoMensaje.ELIMINAR_RESERVAS)) {

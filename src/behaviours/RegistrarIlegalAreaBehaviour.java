@@ -1,4 +1,4 @@
-package behavioursAreas;
+package behaviours;
 
 import jade.core.behaviours.OneShotBehaviour;
 import agents.AreaAgent;
@@ -25,8 +25,6 @@ public class RegistrarIlegalAreaBehaviour extends OneShotBehaviour{
 	public void action() {
 		
 		System.out.println("Voy a registrar un ilegal " + ((AreaAgent) myAgent).getLocalName() + " vehiculo: " + vehicle);
-		((AreaAgent) myAgent).getLstSinReservas().add(vehicle);
-				
-	}
-		
+		((AreaAgent) myAgent).doIllegalParking(vehicle);			
+	}	
 }
