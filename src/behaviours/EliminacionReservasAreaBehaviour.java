@@ -1,4 +1,4 @@
-package behavioursAreas;
+package behaviours;
 
 import jade.core.behaviours.OneShotBehaviour;
 import agents.AreaAgent;

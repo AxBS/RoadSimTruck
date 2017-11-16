@@ -5,8 +5,10 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import agents.AreaAgent;
 import jade.core.AID;
@@ -117,7 +119,7 @@ public class NegociacionAreaBehaviour extends Behaviour{
 		}
 			
 		
-		area.delLstReservas();
+		area.deleteLstPrereservas();
 		// A�ado al area todos los vehiculos en la lista de soluciones
 		for (String v : soluciones.get(area.getLocalName())) {
 			if (!area.getLstReservas().contains(v.toString().trim()))
@@ -127,7 +129,7 @@ public class NegociacionAreaBehaviour extends Behaviour{
 		
 		
 		ACLMessage msg = new ACLMessage(ACLMessage.CFP);
-		msg.setConversationId(TipoMensaje.NEGOCIACION_ASIGNACION_RESERVAS);
+		msg.setOntology("cancelPrereserveOntology");
 		msg.setReplyWith(idNegociacion);
 		msg.setContent("");
 			
@@ -148,7 +150,7 @@ public class NegociacionAreaBehaviour extends Behaviour{
 						msg.addReceiver(new AID(v, false));
 						msg.setContent(a);
 						msg.setPerformative(ACLMessage.CONFIRM);
-						area.inc_Respuesta_Reserva();
+						//area.inc_Respuesta_Reserva();
 						area.send(msg);
 					}
 				}
@@ -158,7 +160,7 @@ public class NegociacionAreaBehaviour extends Behaviour{
 					msg.setPerformative(ACLMessage.DISCONFIRM);
 					msg.addReceiver(new AID(v, false));
 					msg.setContent(area.getLocalName());
-					area.inc_Respuesta_Reserva();
+					//area.inc_Respuesta_Reserva();
 					area.send(msg);	
 				}
 			}
@@ -170,18 +172,18 @@ public class NegociacionAreaBehaviour extends Behaviour{
 	
     private void solicitarPreferenciasVehiculos() {
 		ACLMessage msg = new ACLMessage(ACLMessage.CFP);
-		msg.setConversationId(TipoMensaje.NEGOCIACION_SOLICITAR_PREFERENCIAS);
+		msg.setOntology("getTruckPreferencesOntology");
 		msg.setReplyWith(idNegociacion);
 		msg.setContent("");
 		
 		for (String v : lstVehiculos) {
 			msg.addReceiver(new AID(v, false));
 		}
-		((AreaAgent)myAgent).inc_Sol_Preferencias();
+		//((AreaAgent)myAgent).inc_Sol_Preferencias();
 		((AreaAgent)myAgent).send(msg);
 		
 		System.out.println("Enviadas peticiones a " + lstVehiculos.toString() + " ID: " + idNegociacion + " DE: " + ((AreaAgent)myAgent).getLocalName());
-		mt = MessageTemplate.and(MessageTemplate.MatchConversationId(TipoMensaje.NEGOCIACION_ENVIAR_PREFERENCIAS),
+		mt = MessageTemplate.and(MessageTemplate.MatchOntology("sendTruckPreferencesOntology"),
 								MessageTemplate.MatchReplyWith(idNegociacion));
 		
 	}
@@ -208,7 +210,7 @@ public class NegociacionAreaBehaviour extends Behaviour{
 			}
 */			
 			preferencias.put(msg.getSender().getLocalName().trim(), lstPreferidas);		
-			lstAreasAlcanzables = (ArrayList<String>) Util.UnionListas(lstAreasAlcanzables, (Arrays.asList(tmp)));
+			lstAreasAlcanzables = (ArrayList<String>) UnionListas(lstAreasAlcanzables, (Arrays.asList(tmp)));
 			posicionesVehiculos.put(msg.getSender().getLocalName().trim(), Integer.parseInt(msg.getEncoding()));
 			// El tiempo de conduccion se manda en InReplyTo
 			tiemposConduccion.put(msg.getSender().getLocalName().trim(), Integer.parseInt(msg.getInReplyTo()));
@@ -285,17 +287,17 @@ public class NegociacionAreaBehaviour extends Behaviour{
 		System.out.println("Calculando Pesos Votos de las soluciones ... " + lstSolucionesFactibles.size());
 		if (!lstSolucionesFactibles.isEmpty()) {
 			
-			switch (area.getmodoCalculoPref()){
-				case 1:
+			//switch (area.getmodoCalculoPref()){
+				//case 1:
 					calcularSolGanadora1(lstSolucionesFactibles);
-					break;
-				case 2:
-					calcularSolGanadora2(lstSolucionesFactibles);
-					break;
-				case 3:
+					//break;
+				//case 2:
+					//calcularSolGanadora2(lstSolucionesFactibles);
+					//break;
+				//case 3:
 //					calcularSolGanadora3(lstSolucionesFactibles);
-					break;
-			}
+					//break;
+//			}
 		}
 		System.out.println("Calculado Pesos Votos de las soluciones ... ");
 				
@@ -335,7 +337,9 @@ public class NegociacionAreaBehaviour extends Behaviour{
 				strAreas.append(a + "   ");
 				//Si es el caso especial area "NO" pondra peso un "0"
 				int valor = (preferencias.get(v).indexOf(a) >= 0) ? lstAreasAlcanzables.size() - preferencias.get(v).indexOf(a) : 0;
-				int tc = (tiemposConduccion.get(v) * 100)/area.getTiempoMaxConduccion();
+				//int tc = (tiemposConduccion.get(v) * 100)/area.getTiempoMaxConduccion();
+				//TODO Mirar la ratio para que el resultado sea similar
+				int tc = tiemposConduccion.get(v);
 				int calculo = valor*tc;
 				strPesos.append(calculo + "   ");
 				total += calculo;				
@@ -348,177 +352,177 @@ public class NegociacionAreaBehaviour extends Behaviour{
 			}
 		}
 		
-		//IMPRIMIR EN FICHERO LOG
-		if (area.getFicheroLog().equals("") == false){
-			try
-	        {
-	            fichero = new FileWriter(area.getFicheroLog().concat(".log"), true);
-	            pw = new PrintWriter(fichero);
-
-	            pw.println(strAreas.toString().replace("\n","\r\n"));
-	            pw.println(strPesos.toString().replace("\n","\r\n"));
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	        } finally {
-	           try {
-	           // Nuevamente aprovechamos el finally para 
-	           // asegurarnos que se cierra el fichero.
-	           if (null != fichero)
-	              fichero.close();
-	           } catch (Exception e2) {
-	              e2.printStackTrace();
-	           }
-	        }
-			
-		}
-		
+//		//IMPRIMIR EN FICHERO LOG
+//		if (area.getFicheroLog().equals("") == false){
+//			try
+//	        {
+//	            fichero = new FileWriter(area.getFicheroLog().concat(".log"), true);
+//	            pw = new PrintWriter(fichero);
+//
+//	            pw.println(strAreas.toString().replace("\n","\r\n"));
+//	            pw.println(strPesos.toString().replace("\n","\r\n"));
+//	        } catch (Exception e) {
+//	            e.printStackTrace();
+//	        } finally {
+//	           try {
+//	           // Nuevamente aprovechamos el finally para 
+//	           // asegurarnos que se cierra el fichero.
+//	           if (null != fichero)
+//	              fichero.close();
+//	           } catch (Exception e2) {
+//	              e2.printStackTrace();
+//	           }
+//	        }
+//			
+//		}
+//		
 	}
 
-	private void calcularSolGanadora2(List<List<String>> lstSolucionesFactibles) {
-	   	int total;
-	   	int maxPuntuacion = 0;
-		String v;
-		String a;
-		FileWriter fichero = null;
-		PrintWriter pw = null;
-		StringBuilder strAreas = new StringBuilder();
-		StringBuilder strPesos = new StringBuilder();
-		
-		solucionGanadora = null;
-		System.out.println("CALCULANDO CON METODO 2 ... ");
-		
-		strAreas.setLength(0);
-		strPesos.setLength(0);
-		strAreas.append("Negociaci�n por Area: " + area.getLocalName() + ". Id Negociacion: " + idNegociacion + "\n");
-		strPesos.append("Negociaci�n por Area: " + area.getLocalName() + ". Id Negociacion: " + idNegociacion + "\n");
-		
-		//para mostrar en los los vehiculos implicados
-		for (int i = 0; i < lstVehiculos.size(); i++){
-			strAreas.append(lstVehiculos.get(i).toString().trim() + "   ");
-			strPesos.append(lstVehiculos.get(i).toString().trim() + "   ");
-		}
-		strAreas.append("\n");
-		strPesos.append("\n");		
-		
-		for (List<String> lst : lstSolucionesFactibles) {
-			total = 0;
-			for (int i = 0; i < lst.size(); i++) {
-				a = lst.get(i).toString().trim();
-				v = lstVehiculos.get(i).toString().trim();
-				strAreas.append(a + "   ");
-				//Si es el caso especial area "NO" pondra peso un "0"
-				int valor = (preferencias.get(v).indexOf(a) >= 0) ? 100 / preferencias.get(v).size() * (preferencias.get(v).size() - preferencias.get(v).indexOf(a)) : 0;
-				int tc = (tiemposConduccion.get(v) * 100)/area.getTiempoMaxConduccion();
-				int calculo = valor*tc;
-				strPesos.append(calculo + "   ");
-				total += calculo;				
-			}
-			strAreas.append("\n");
-			strPesos.append(" = " + total + "\n");
-			if (total >= maxPuntuacion) {
-				solucionGanadora = lst;
-				maxPuntuacion = total;
-			}
-		}
-		
-		//IMPRIMIR EN FICHERO LOG
-		if (area.getFicheroLog().equals("") == false){
-			try
-	        {
-	            fichero = new FileWriter(area.getFicheroLog().concat(".log"), true);
-	            pw = new PrintWriter(fichero);
-
-	            pw.println(strAreas.toString().replace("\n","\r\n"));
-	            pw.println(strPesos.toString().replace("\n","\r\n"));
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	        } finally {
-	           try {
-	           // Nuevamente aprovechamos el finally para 
-	           // asegurarnos que se cierra el fichero.
-	           if (null != fichero)
-	              fichero.close();
-	           } catch (Exception e2) {
-	              e2.printStackTrace();
-	           }
-	        }
-			
-		}
-		
-	}
-
-	private void calcularSolGanadora3(List<List<String>> lstSolucionesFactibles) {
-	   	int total;
-	   	int maxPuntuacion = 0;
-		String v;
-		String a;
-		FileWriter fichero = null;
-		PrintWriter pw = null;
-		StringBuilder strAreas = new StringBuilder();
-		StringBuilder strPesos = new StringBuilder();
-		
-		solucionGanadora = null; 
-		System.out.println("CALCULANDO CON METODO 3 ... ");
-		
-		strAreas.setLength(0);
-		strPesos.setLength(0);
-		strAreas.append("Negociaci�n por Area: " + area.getLocalName() + ". Id Negociacion: " + idNegociacion + "\n");
-		strPesos.append("Negociaci�n por Area: " + area.getLocalName() + ". Id Negociacion: " + idNegociacion + "\n");
-		
-		//para mostrar los vehiculos implicados
-		for (int i = 0; i < lstVehiculos.size(); i++){
-			strAreas.append(lstVehiculos.get(i).toString().trim() + "   ");
-			strPesos.append(lstVehiculos.get(i).toString().trim() + "   ");
-		}
-		strAreas.append("\n");
-		strPesos.append("\n");		
-		
-		for (List<String> lst : lstSolucionesFactibles) {
-			total = 0;
-			for (int i = 0; i < lst.size(); i++) {
-				a = lst.get(i).toString().trim();
-				v = lstVehiculos.get(i).toString().trim();
-				strAreas.append(a + "   ");
-				//Si es el caso especial area "NO" pondra una utlidad "0"
-				int calculo = (preferencias.get(v).indexOf(a) >= 0) ? area.getTiempoMaxConduccion()-((tiemposConduccion.get(v) + (area.getPosicion() - posicionesVehiculos.get(v))*60/100)) : 0;
-//				System.out.println("Vehiculo: " + v + " Area: " + area.getLocalName() + " T. max Cond: " + area.getTiempoMaxConduccion() + " Pos Area: " + area.getPosicion() + "Tcond veh: " + tiemposConduccion.get(v) + " Pos Veh: " + posicionesVehiculos.get(v) + "Dif. Veh: " + diferencialesTiempo.get(v));
-				strPesos.append(calculo + "   ");
-				total += calculo;				
-			}
-			strAreas.append("\n");
-			strPesos.append(" = " + total + "\n");
-			if (total >= maxPuntuacion) {
-				solucionGanadora = lst;
-				maxPuntuacion = total;
-			}
-		}
-		
-		//IMPRIMIR EN FICHERO LOG
-		if (area.getFicheroLog().equals("") == false){
-			try
-	        {
-	            fichero = new FileWriter(area.getFicheroLog().concat(".log"), true);
-	            pw = new PrintWriter(fichero);
-
-	            pw.println(strAreas.toString().replace("\n","\r\n"));
-	            pw.println(strPesos.toString().replace("\n","\r\n"));
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	        } finally {
-	           try {
-	           // Nuevamente aprovechamos el finally para 
-	           // asegurarnos que se cierra el fichero.
-	           if (null != fichero)
-	              fichero.close();
-	           } catch (Exception e2) {
-	              e2.printStackTrace();
-	           }
-	        }
-			
-		}
-		
-	}
-	
+//	private void calcularSolGanadora2(List<List<String>> lstSolucionesFactibles) {
+//	   	int total;
+//	   	int maxPuntuacion = 0;
+//		String v;
+//		String a;
+//		FileWriter fichero = null;
+//		PrintWriter pw = null;
+//		StringBuilder strAreas = new StringBuilder();
+//		StringBuilder strPesos = new StringBuilder();
+//		
+//		solucionGanadora = null;
+//		System.out.println("CALCULANDO CON METODO 2 ... ");
+//		
+//		strAreas.setLength(0);
+//		strPesos.setLength(0);
+//		strAreas.append("Negociaci�n por Area: " + area.getLocalName() + ". Id Negociacion: " + idNegociacion + "\n");
+//		strPesos.append("Negociaci�n por Area: " + area.getLocalName() + ". Id Negociacion: " + idNegociacion + "\n");
+//		
+//		//para mostrar en los los vehiculos implicados
+//		for (int i = 0; i < lstVehiculos.size(); i++){
+//			strAreas.append(lstVehiculos.get(i).toString().trim() + "   ");
+//			strPesos.append(lstVehiculos.get(i).toString().trim() + "   ");
+//		}
+//		strAreas.append("\n");
+//		strPesos.append("\n");		
+//		
+//		for (List<String> lst : lstSolucionesFactibles) {
+//			total = 0;
+//			for (int i = 0; i < lst.size(); i++) {
+//				a = lst.get(i).toString().trim();
+//				v = lstVehiculos.get(i).toString().trim();
+//				strAreas.append(a + "   ");
+//				//Si es el caso especial area "NO" pondra peso un "0"
+//				int valor = (preferencias.get(v).indexOf(a) >= 0) ? 100 / preferencias.get(v).size() * (preferencias.get(v).size() - preferencias.get(v).indexOf(a)) : 0;
+//				int tc = (tiemposConduccion.get(v) * 100)/area.getTiempoMaxConduccion();
+//				int calculo = valor*tc;
+//				strPesos.append(calculo + "   ");
+//				total += calculo;				
+//			}
+//			strAreas.append("\n");
+//			strPesos.append(" = " + total + "\n");
+//			if (total >= maxPuntuacion) {
+//				solucionGanadora = lst;
+//				maxPuntuacion = total;
+//			}
+//		}
+//		
+//		//IMPRIMIR EN FICHERO LOG
+//		if (area.getFicheroLog().equals("") == false){
+//			try
+//	        {
+//	            fichero = new FileWriter(area.getFicheroLog().concat(".log"), true);
+//	            pw = new PrintWriter(fichero);
+//
+//	            pw.println(strAreas.toString().replace("\n","\r\n"));
+//	            pw.println(strPesos.toString().replace("\n","\r\n"));
+//	        } catch (Exception e) {
+//	            e.printStackTrace();
+//	        } finally {
+//	           try {
+//	           // Nuevamente aprovechamos el finally para 
+//	           // asegurarnos que se cierra el fichero.
+//	           if (null != fichero)
+//	              fichero.close();
+//	           } catch (Exception e2) {
+//	              e2.printStackTrace();
+//	           }
+//	        }
+//			
+//		}
+//		
+//	}
+//
+//	private void calcularSolGanadora3(List<List<String>> lstSolucionesFactibles) {
+//	   	int total;
+//	   	int maxPuntuacion = 0;
+//		String v;
+//		String a;
+//		FileWriter fichero = null;
+//		PrintWriter pw = null;
+//		StringBuilder strAreas = new StringBuilder();
+//		StringBuilder strPesos = new StringBuilder();
+//		
+//		solucionGanadora = null; 
+//		System.out.println("CALCULANDO CON METODO 3 ... ");
+//		
+//		strAreas.setLength(0);
+//		strPesos.setLength(0);
+//		strAreas.append("Negociaci�n por Area: " + area.getLocalName() + ". Id Negociacion: " + idNegociacion + "\n");
+//		strPesos.append("Negociaci�n por Area: " + area.getLocalName() + ". Id Negociacion: " + idNegociacion + "\n");
+//		
+//		//para mostrar los vehiculos implicados
+//		for (int i = 0; i < lstVehiculos.size(); i++){
+//			strAreas.append(lstVehiculos.get(i).toString().trim() + "   ");
+//			strPesos.append(lstVehiculos.get(i).toString().trim() + "   ");
+//		}
+//		strAreas.append("\n");
+//		strPesos.append("\n");		
+//		
+//		for (List<String> lst : lstSolucionesFactibles) {
+//			total = 0;
+//			for (int i = 0; i < lst.size(); i++) {
+//				a = lst.get(i).toString().trim();
+//				v = lstVehiculos.get(i).toString().trim();
+//				strAreas.append(a + "   ");
+//				//Si es el caso especial area "NO" pondra una utlidad "0"
+//				int calculo = (preferencias.get(v).indexOf(a) >= 0) ? area.getTiempoMaxConduccion()-((tiemposConduccion.get(v) + (area.getPosicion() - posicionesVehiculos.get(v))*60/100)) : 0;
+////				System.out.println("Vehiculo: " + v + " Area: " + area.getLocalName() + " T. max Cond: " + area.getTiempoMaxConduccion() + " Pos Area: " + area.getPosicion() + "Tcond veh: " + tiemposConduccion.get(v) + " Pos Veh: " + posicionesVehiculos.get(v) + "Dif. Veh: " + diferencialesTiempo.get(v));
+//				strPesos.append(calculo + "   ");
+//				total += calculo;				
+//			}
+//			strAreas.append("\n");
+//			strPesos.append(" = " + total + "\n");
+//			if (total >= maxPuntuacion) {
+//				solucionGanadora = lst;
+//				maxPuntuacion = total;
+//			}
+//		}
+//		
+//		//IMPRIMIR EN FICHERO LOG
+//		if (area.getFicheroLog().equals("") == false){
+//			try
+//	        {
+//	            fichero = new FileWriter(area.getFicheroLog().concat(".log"), true);
+//	            pw = new PrintWriter(fichero);
+//
+//	            pw.println(strAreas.toString().replace("\n","\r\n"));
+//	            pw.println(strPesos.toString().replace("\n","\r\n"));
+//	        } catch (Exception e) {
+//	            e.printStackTrace();
+//	        } finally {
+//	           try {
+//	           // Nuevamente aprovechamos el finally para 
+//	           // asegurarnos que se cierra el fichero.
+//	           if (null != fichero)
+//	              fichero.close();
+//	           } catch (Exception e2) {
+//	              e2.printStackTrace();
+//	           }
+//	        }
+//			
+//		}
+//		
+//	}
+//	
 	@Override
 	public boolean done() {
 		return step == 10;
@@ -527,13 +531,22 @@ public class NegociacionAreaBehaviour extends Behaviour{
 	@Override
 	public int onEnd() {				
 				
-		System.out.println("===>>> " + area.getLocalName() + " Termina la negociacion numero " + area.getNumeroTotalNegociaciones() + " lanzada por " + lstVehiculos.get(lstVehiculos.size()-1) + ". QUEDAN: " + area.getBufferNegociaciones().size());
+		System.out.println("===>>> " + area.getLocalName() + " Termina la negociacion numero " + area.getNumTotalNegociaciones() + " lanzada por " + lstVehiculos.get(lstVehiculos.size()-1) + ". QUEDAN: " + area.getBufferNegociaciones().size());
 		area.setEstadoNegociacion(false);
 		
 		t_fin = System.currentTimeMillis();
-		area.anadirTiempoNegociacion(t_fin - t_ini);
+		//area.anadirTiempoNegociacion(t_fin - t_ini);
 			
 		return super.onEnd();
+	}
+	
+	public static List<String> UnionListas(List<String> listOne, List<String> listTwo) {
+		Set<String> set = new HashSet<String>();
+
+		set.addAll(listOne);
+		set.addAll(listTwo);
+
+		return new ArrayList<String>(set);
 	}
 	
 }
