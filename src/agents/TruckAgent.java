@@ -140,7 +140,7 @@ public class TruckAgent extends Agent {
 			this.alg = factory.getAlgorithm(Method.SHORTEST);
 			
 		}
-		
+
 		//Get the initial time tick from eventManager
 		tini = (long) this.getArguments()[7];
 		
@@ -148,9 +148,16 @@ public class TruckAgent extends Agent {
 		ratio = (int) this.getArguments()[8];
 		
 		//Get the desired Path from the origin to the destination
-		this.path = alg.getPath(this.map, getInitialIntersection(), 
-				                getFinalIntersection(), 
-				                this.maxSpeed);
+		this.path = alg.getPath(this.map, getInitialIntersection(),
+				getFinalIntersection(),
+				this.maxSpeed);
+
+		if(this.calculateDistanceFromSegments(this.path.getSegmentPath()) > this.maxDistanceToGo){
+			//Generas las areas favoritas
+			this.generateFavouriteAreas(this.map.getListAreas());
+			//TODO Behavior prereserva --> area
+		}
+
 		
 		//Starting point
 		setX(map.getIntersectionByID(getInitialIntersection()).
@@ -270,15 +277,24 @@ public class TruckAgent extends Agent {
 	private double getDistanceToArea(Area area) {
 		double distance = 0;
 		
-		Path path = alg.getPath(map, currentSegment.getOrigin().getId(), area.getIntersection().getId(), this.maxSpeed);
-		
+		Path path;
+
+		Segment segmentToBegin;
+
+		if(this.getCurrentSegment()!=null)
+			segmentToBegin =  currentSegment;
+		else
+			segmentToBegin = alg.getPath(map, this.map.getIntersectionByID(this.getInitialIntersection()).getId(), area.getIntersection().getId(), this.maxSpeed)
+					.getSegmentPath().get(0);
+
+		path = alg.getPath(map, segmentToBegin.getOrigin().getId(), area.getIntersection().getId(), this.maxSpeed);
+
 		for(Segment seg : path.getSegmentPath()) {
-			
 			distance+= seg.getLength();
 			
 			//Tenemos en cuenta la distancia desde la posición actual del camión hasta el inicio del segmento (intersección)
-			if(seg.getId().equals(currentSegment.getId())) {
-				double ini = currentSegment.getPkIni();
+			if(seg.getId().equals(segmentToBegin.getId())) {
+				double ini = segmentToBegin.getPkIni();
 				double pos = this.currentPk;
 				
 				distance -= Math.abs(ini-pos);
@@ -294,9 +310,10 @@ public class TruckAgent extends Agent {
 	 * @param areas List of existing areas
 	 */
 	public void generateFavouriteAreas(ArrayList<Area> areas) {
-		
-		ArrayList<Area> preferences = new ArrayList<Area>();
-		HashMap<Double,Area> bag = new HashMap<Double,Area>(); 
+		System.out.println("Areas a priorizar");
+		System.out.println(areas.toString());
+		ArrayList<Area> preferences = new ArrayList<>();
+		HashMap<Double,Area> bag = new HashMap<>();
 		
 		
 		for(Area a:areas) {
@@ -308,14 +325,12 @@ public class TruckAgent extends Agent {
 		Set<String> keySet = (Set) bag.keySet();
 		ArrayList<String> list = new ArrayList<String>(keySet);     
 		Collections.sort(list);
+		Collections.reverse(list);
 		
 		for(int i = 0; i<3 && i<list.size(); i++) {
 			preferences.add(bag.get(list.get(i)));
 		}
-		//TODO TESTIIIIIINGGGGGGGGGGG correct order
-		
-		
-		
+
 		this.favouriteAreas = preferences;
 	}
 	
@@ -352,10 +367,7 @@ public class TruckAgent extends Agent {
 		
 		
 	}
-	
-	
-	
-	
+
 	/**
 	 * Recalculate the route, this will be called from the behaviour 
 	 *     if we are smart.
@@ -371,8 +383,6 @@ public class TruckAgent extends Agent {
 		this.path = this.alg.getPath(this.map, origin, 
 				               getFinalIntersection(), this.maxSpeed);
 	}
-
-
 
 	//Setters and getters
 	public int getDirection() {
@@ -482,14 +492,6 @@ public class TruckAgent extends Agent {
 	public void setCurrentTrafficDensity(double currentTD) {
 		this.currentTrafficDensity = currentTD;
 	}
-
-//	public long getElapsedtime() {
-//		return elapsedtime;
-//	}
-//
-//	public void increaseElapsedtime() {
-//		this.elapsedtime++;
-//	}
 
 	public long getTini() {
 		return tini;
