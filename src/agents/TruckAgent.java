@@ -50,14 +50,16 @@ public class TruckAgent extends Agent {
 	private float x, y;
 	private float currentPk;
 	
-	//Time spent resting
-	private long secondsToRest = 120; 
+	//Time spent resting IN SECONDS
+	private long timeToRest = 120; 
 
 	//Selected Area to stop
 	private float AreaX=317, AreaY=304;
 	
+	
 	//Favourite area list
 	private ArrayList<Area> favouriteAreas;
+	private Area designatedArea;
 	
 	//MaxDistance the truck can cover without stopping
 	double maxDistanceToGo = 0;
@@ -199,7 +201,11 @@ public class TruckAgent extends Agent {
 			msg.setOntology("newCarOntology");
 			send(msg);
 		}
-
+		//:::::::::::::::::::::::::::::::::::::		//:::::::::::::::::::::::::::::::::::::		//:::::::::::::::::::::::::::::::::::::
+		//:::::::::::::::::::::::::::::::::::::		//:::::::::::::::::::::::::::::::::::::		//:::::::::::::::::::::::::::::::::::::
+		//:::::::::::::::::::::::::::::::::::::		//:::::::::::::::::::::::::::::::::::::		//:::::::::::::::::::::::::::::::::::::
+		//:::::::::::::::::::::::::::::::::::::		//:::::::::::::::::::::::::::::::::::::		//:::::::::::::::::::::::::::::::::::::
+		//:::::::::::::::::::::::::::::::::::::		//:::::::::::::::::::::::::::::::::::::		//:::::::::::::::::::::::::::::::::::::
 
 		// Set the initial values for the truckAgent on the road
 		Step next = getPath().getGraphicalPath().get(0);
@@ -248,10 +254,18 @@ public class TruckAgent extends Agent {
 		    }
 	    }
 		//Runs the agent
-		addBehaviour(new TruckBehaviour(this, 50, this.drawGUI,this.secondsToRest));
+	    //TODO
+	    //Antes de añadir comportamiento de movimiento, necesitamos saber adonde vamos
+	    //Añadir comportamiento de negociación de area
+	    
+		addBehaviour(new TruckBehaviour(this, 50, this.drawGUI,this.timeToRest));
 		//addBehaviour(new CarReceivingDataBehaviour(this));
 
 	}
+	/*
+	 * Calcula la distancia hasta un area concreta desde nuestra posicción actual
+	 * @params  area Area hasta la que queremos calcular la distancia
+	 */
 	
 	private double getDistanceToArea(Area area) {
 		double distance = 0;
@@ -291,8 +305,8 @@ public class TruckAgent extends Agent {
 				bag.put(this.getDistanceToArea(a), a);
 		}
 		
-		Set keySet = (Set) bag.keySet();
-		ArrayList list = new ArrayList(keySet);     
+		Set<String> keySet = (Set) bag.keySet();
+		ArrayList<String> list = new ArrayList<String>(keySet);     
 		Collections.sort(list);
 		
 		for(int i = 0; i<3 && i<list.size(); i++) {
@@ -359,44 +373,6 @@ public class TruckAgent extends Agent {
 	}
 
 
-
-	/**Calcular areas preferidas de VehicleAgent de Jose*/
-	public void CalcularAreasPreferidas() {
-
-		// Obtener la máxima posicion alcanzable
-		float maxPosicion = (((tiempoMaximoConduccion - tiempoConduccion) * currentSpeed) / 60) + currentPk;
-
-		// Eliminar las areas inalcanzables
-		HashMap<String, Integer> tmpLstAreas = (HashMap<String, Integer>) lstAreas.clone();
-
-		for ( Entry<String, Integer> entry : lstAreas.entrySet()) {
-			if (entry.getValue() < this.posicion || entry.getValue() > maxPosicion)
-				tmpLstAreas.remove(entry.getKey());
-		}
-		lstAreas = tmpLstAreas;
-
-		// Ordenamos por Values
-		if (!lstAreas.isEmpty() && lstAreas.size() > 0)
-		{
-			lstAreas = (HashMap<String, Integer>) sortByComparator(lstAreas);
-
-			//Ahora elimino para dejar el numero máximo de preferencias
-			HashMap<String, Integer> tmpLstAreas2 = (HashMap<String, Integer>) lstAreas.clone();
-			int i = 1;
-
-			for ( Entry<String, Integer> entry : lstAreas.entrySet())
-			{
-				if (i > this.numeroMaxPreferencias)
-					tmpLstAreas2.remove(entry.getKey());
-				else
-					i++;
-			}
-
-			lstAreas = tmpLstAreas2;
-			System.out.println(getAID().getLocalName() + " Pos:" + posicion + " Areas preferidas: "+ lstAreas.toString());
-		}
-
-	}
 
 	//Setters and getters
 	public int getDirection() {
@@ -540,12 +516,12 @@ public class TruckAgent extends Agent {
 	}
 	
 
-	public long getSecondsToRest() {
-		return secondsToRest;
+	public long getTimeToRest() {
+		return timeToRest;
 	}
 
-	public void setSecondsToRest(long secondsToRest) {
-		this.secondsToRest = secondsToRest;
+	public void setTimeToRest(long timeToRest) {
+		this.timeToRest = timeToRest;
 	}
 
 

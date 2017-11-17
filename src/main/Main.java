@@ -41,7 +41,7 @@ public class Main {
 			"/home/usuario/Documents/SimulationResults";
 
 	public static void main(String[] args) {
-		
+		   
 		Map map = null;
 
 		//Get a hold on JADE runtime

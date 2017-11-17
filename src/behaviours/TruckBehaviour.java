@@ -36,16 +36,16 @@ public class TruckBehaviour extends CyclicBehaviour {
 	private boolean drawGUI;
 	private long previousTick;
 	private boolean stopped;
-	private long secondsToRest;
+	private long timeToRest;
 	
 
-	public TruckBehaviour(TruckAgent a, long timeout, boolean drawGUI, long secondsToRest) {
+	public TruckBehaviour(TruckAgent a, long timeout, boolean drawGUI, long timeToRest) {
 
 		this.agent = a;
 		this.drawGUI = drawGUI;
 		this.topic = null;
 		previousTick = agent.getTini() - 1;
-		this.secondsToRest = secondsToRest;
+		this.timeToRest = timeToRest;
 		
 		try {
 			TopicManagementHelper topicHelper =(TopicManagementHelper) 
@@ -70,13 +70,41 @@ public class TruckBehaviour extends CyclicBehaviour {
 
 		if (msg != null) {
 			
+			//TODO Asociar codigo siguiente con el funcionamiento del TruckBehaviour
+			
+//			if (msg.getConversationId().equals(TipoMensaje.ELIMINAR_RESERVAS) )
+//			{
+//				vehicle.addBehaviour(new EliminacionVehiculoBehaviour(msg.getSender().getLocalName()));
+//				System.out.println(vehicle.getLocalName() + " elimino reservas por eliminicacion de " + msg.getSender().getLocalName());
+//			}
+//			else if (msg.getConversationId().equals(TipoMensaje.NEGOCIACION_SOLICITAR_PREFERENCIAS))
+//			{
+//				vehicle.addBehaviour(new NegociacionVehiculoBehaviour(vehicle, msg));
+//			}
+//			else if (msg.getConversationId().equals(TipoMensaje.NEGOCIACION_ASIGNACION_RESERVAS) )
+//			{
+//				vehicle.addBehaviour(new AsignacionReservasVehiculosBehaviour(vehicle, msg));
+//				System.out.println(vehicle.getLocalName() + " voy a asignar reserva");
+//			}
+//			
+//			
+//			
+			
+			
 			//If truck is stopped, take a tick out of waiting time until waiting time is 0
 			if (stopped) {
-				secondsToRest--;
-				//System.out.println("Quedan:" +secondsToRest+" segundos .");
+				//Truck dentro del area
+				timeToRest--;
+				//
+				
 
-				if (secondsToRest <= 0) {
+				if (timeToRest <= 0) {
+					//El truck sale del area
+					//TODO Avisar al area de que nos hemos ido
+					//TODO Desatar negociación para siguiente area destino si no podemos llegar al destino final
 					stopped = false;
+					
+					
 				}
 			} else {
 
@@ -108,6 +136,8 @@ public class TruckBehaviour extends CyclicBehaviour {
 					// If it is in the vicinity, the truck stops for the desired
 					// time (ticks).
 					if (aprox(AreaX, currentX) && aprox(AreaY, currentY)) {
+						//Truck in the desigantes stopping point
+						//TODO avisar al area de que se ha llegado y aparcado
 						System.out.println("::::::TRUCK RESTING::::::");
 						stopped = true;
 					}
@@ -191,20 +221,20 @@ public class TruckBehaviour extends CyclicBehaviour {
 							// I don't know if remove the edge or if remove
 							// the content of the edge
 
-							// Once rerouted, Delete data from future
-							// Traffic related to this new segment
-							agent.getFutureTraffic().delete(next.getSegment().getId());
-							// Introducir el Tfin en TrafficData
-							agent.getSensorTrafficData().setTfin(tfin);
-							// Introduce current TrafficData into
-							// the pastTraffic
-							// First give the number of cars detected
-							agent.getSensorTrafficData()
-									.setNumCars(agent.getSensorTrafficData().getCarsPositions().size());
-							agent.getPastTraffic().put(previousSegmentId, agent.getSensorTrafficData());
-							// Start a new current trafficData by myself
-							agent.setSensorTrafficData(new TrafficData());
-							agent.getSensorTrafficData().setTini(tfin);
+//							// Once rerouted, Delete data from future
+//							// Traffic related to this new segment
+//							agent.getFutureTraffic().delete(next.getSegment().getId());
+//							// Introducir el Tfin en TrafficData
+//							agent.getSensorTrafficData().setTfin(tfin);
+//							// Introduce current TrafficData into
+//							// the pastTraffic
+//							// First give the number of cars detected
+//							agent.getSensorTrafficData()
+//									.setNumCars(agent.getSensorTrafficData().getCarsPositions().size());
+//							agent.getPastTraffic().put(previousSegmentId, agent.getSensorTrafficData());
+//							// Start a new current trafficData by myself
+//							agent.setSensorTrafficData(new TrafficData());
+//							agent.getSensorTrafficData().setTini(tfin);
 						}
 
 						// If we are going under the maximum speed I'm
@@ -289,6 +319,12 @@ public class TruckBehaviour extends CyclicBehaviour {
 	public static boolean aprox(final double d1, final double d2) {
 	    return Math.abs(d1 - d2) < 2;
 	}
-
+	
+	private boolean rested() {
+		if(timeToRest>0)
+			timeToRest--;
+		
+		return true;
+	}
 
 }
