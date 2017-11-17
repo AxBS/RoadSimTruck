@@ -10,9 +10,6 @@ import jade.lang.acl.MessageTemplate;
 import searchAlgorithms.Algorithm;
 import searchAlgorithms.AlgorithmFactory;
 import searchAlgorithms.Method;
-import trafficData.TrafficData;
-import trafficData.TrafficDataInStore;
-import trafficData.TrafficDataOutStore;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,12 +17,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-import org.jgrapht.graph.DefaultDirectedWeightedGraph;
 import org.json.JSONObject;
 
 import behaviours.TruckBehaviour;
 import environment.Area;
-import environment.Intersection;
 import environment.Map;
 import environment.Path;
 import environment.Segment;
@@ -35,6 +30,16 @@ import environment.Step;
  * This code represents a Truck, it will have an origin an a 
  * destination and will get there using either the shortest, 
  * fastest or smartest path. Also, it will stop in some areas to rest.
+ *
+ *
+ * Los comportamientos que Jose implementa (ListenerVehiculosBehaviour):
+ * 		NEGOCIACION_SOLICITAR_PREFERENCIAS - NegociacionVehiculoBehaviour
+ * 		NEGOCIACION_ASIGNACION_RESERVAS - AsignacionReservasVehiculosBehaviour
+ * 		ELIMINAR_RESERVAS - EliminacionVehiculoBehaviour
+ * 	(VehicleBehaviour) añade subbehaviours:
+ * 		ObtenerAreasBehaviour
+ * 		OrdenarListaAreasBehaviour
+ * 		SolicitarReservaBehaviour
  *
  */
 public class TruckAgent extends Agent {
@@ -53,7 +58,6 @@ public class TruckAgent extends Agent {
 	
 	//Favourite area list
 	private ArrayList<Area> favouriteAreas;
-	//TODO
 	
 	//MaxDistance the truck can cover without stopping
 	double maxDistanceToGo = 0;
@@ -75,19 +79,12 @@ public class TruckAgent extends Agent {
 	private boolean specialColor = false;
 	private Algorithm alg;
 	private int algorithmType;
-   
-	// This object stores current traffic sensored data
-	// every time a car goes into a new segment, this object is
-	// reseting.
-	private TrafficData sensorTrafficData;
 
-	// future: is for storing data received from other cars and
-	//    used for computing my route to destination
-	private TrafficDataInStore futureTraffic;
-
-	// past: is for informing data to send to other cars about
-	//    what is the traffic state in my performed route
-    private TrafficDataOutStore pastTraffic;
+	/**
+	 * Jose variables
+	 * */
+	private int tiempoConduccion = 180;
+	private int tiempoMaximoConduccion = 240;
 
 	protected void setup() {
 		
@@ -158,16 +155,6 @@ public class TruckAgent extends Agent {
 				                                          getX());
 		setY(map.getIntersectionByID(getInitialIntersection()).
 				                                          getY());
-
-		//Store data received from other cars in a Map
-		futureTraffic = new TrafficDataInStore();
-
-		//Store data to send to other cars in my route
-		pastTraffic = new TrafficDataOutStore();
-
-
-		// Store current trafficData sensored by myself
-		sensorTrafficData = new TrafficData();
 		
 		if(this.drawGUI){
 			//Find the interface agent
@@ -290,7 +277,7 @@ public class TruckAgent extends Agent {
 	/**
 	 * Generates and sets a favourite list of areas for the truck
 	 * 
-	 * @param List of existing areas
+	 * @param areas List of existing areas
 	 */
 	public void generateFavouriteAreas(ArrayList<Area> areas) {
 		
@@ -321,7 +308,7 @@ public class TruckAgent extends Agent {
 	/**
 	 * Returns the distance to cover all the segments in a list
 	 * 
-	 * @param List of segments to drive through
+	 * @param list List of segments to drive through
 	 */
 	public double calculateDistanceFromSegments(List<Segment> list) {
 		double dist=0;
@@ -333,9 +320,9 @@ public class TruckAgent extends Agent {
 	}
 	
 	/**
-	 * Generates and sets a favourite list of areas for the truck
+	 * Encuentra la destinación del track actual
 	 * 
-	 * @param List of existing areas
+	 *
 	 */
 	public void findActualDestination() {
 		//TODO
@@ -369,6 +356,46 @@ public class TruckAgent extends Agent {
 		// TODO:
 		this.path = this.alg.getPath(this.map, origin, 
 				               getFinalIntersection(), this.maxSpeed);
+	}
+
+
+
+	/**Calcular areas preferidas de VehicleAgent de Jose*/
+	public void CalcularAreasPreferidas() {
+
+		// Obtener la máxima posicion alcanzable
+		float maxPosicion = (((tiempoMaximoConduccion - tiempoConduccion) * currentSpeed) / 60) + currentPk;
+
+		// Eliminar las areas inalcanzables
+		HashMap<String, Integer> tmpLstAreas = (HashMap<String, Integer>) lstAreas.clone();
+
+		for ( Entry<String, Integer> entry : lstAreas.entrySet()) {
+			if (entry.getValue() < this.posicion || entry.getValue() > maxPosicion)
+				tmpLstAreas.remove(entry.getKey());
+		}
+		lstAreas = tmpLstAreas;
+
+		// Ordenamos por Values
+		if (!lstAreas.isEmpty() && lstAreas.size() > 0)
+		{
+			lstAreas = (HashMap<String, Integer>) sortByComparator(lstAreas);
+
+			//Ahora elimino para dejar el numero máximo de preferencias
+			HashMap<String, Integer> tmpLstAreas2 = (HashMap<String, Integer>) lstAreas.clone();
+			int i = 1;
+
+			for ( Entry<String, Integer> entry : lstAreas.entrySet())
+			{
+				if (i > this.numeroMaxPreferencias)
+					tmpLstAreas2.remove(entry.getKey());
+				else
+					i++;
+			}
+
+			lstAreas = tmpLstAreas2;
+			System.out.println(getAID().getLocalName() + " Pos:" + posicion + " Areas preferidas: "+ lstAreas.toString());
+		}
+
 	}
 
 	//Setters and getters
@@ -494,30 +521,6 @@ public class TruckAgent extends Agent {
 
 	public void setTini(long tini) {
 		this.tini = tini;
-	}
-
-	public TrafficData getSensorTrafficData() {
-		return sensorTrafficData;
-	}
-
-	public void setSensorTrafficData(TrafficData sensorTrafficData) {
-		this.sensorTrafficData = sensorTrafficData;
-	}
-
-	public TrafficDataOutStore getPastTraffic() {
-		return pastTraffic;
-	}
-
-	public void setPastTraffic(TrafficDataOutStore pastTraffic) {
-		this.pastTraffic = pastTraffic;
-	}
-
-	public TrafficDataInStore getFutureTraffic() {
-		return futureTraffic;
-	}
-
-	public void setFutureTraffic(TrafficDataInStore futureTraffic) {
-		this.futureTraffic = futureTraffic;
 	}
 	
 	public float getAreaX() {
