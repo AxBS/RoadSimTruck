@@ -98,14 +98,14 @@ public class TruckBehaviour extends CyclicBehaviour {
 				//
 				
 
-				if (timeToRest <= 0) {
+				if (timeToRest <= 0)
 					//El truck sale del area
 					//TODO Avisar al area de que nos hemos ido
 					//TODO Desatar negociación para siguiente area destino si no podemos llegar al destino final
 					stopped = false;
-					
-					
-				}
+
+
+
 			} else {
 
 				long currentTick = Long.parseLong(msg.getContent());
