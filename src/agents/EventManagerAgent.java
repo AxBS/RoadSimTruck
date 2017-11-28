@@ -64,7 +64,6 @@ public class EventManagerAgent extends Agent {
 				                             this.getArguments()[1];
 		this.segmentContainer = (jade.wrapper.AgentContainer) 
 				                             this.getArguments()[2];
-		//TODO
 		//:::GET TRUCK CONTAINER:::::
 		//:::GET AREA CONTAINER :::
 		this.truckContainer = (jade.wrapper.AgentContainer) this.getArguments()[6];
@@ -116,7 +115,6 @@ public class EventManagerAgent extends Agent {
 		File[] files = new File(url).listFiles();
 
 		//Check correct files
-		// TODO: read in a better way the file of events
 		//       Maybe as a parameter received from the Main
 		BufferedReader eventsReader = null;
 

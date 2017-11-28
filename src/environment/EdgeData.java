@@ -14,7 +14,6 @@ public class EdgeData {
 	private long finalDate;
 
 	public EdgeData() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public EdgeData(char weight, long initialDate, long finalDate) {

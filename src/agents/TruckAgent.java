@@ -287,8 +287,10 @@ public class TruckAgent extends Agent {
 		double distance = 0;
 
 		Path path;
-
-		path = alg.getPath(map, this.getCurrentSegment().getOrigin().getId(), i.getId(), this.maxSpeed);
+		if(this.currentSegment == null)
+			path = alg.getPath(map, this.getCurrentSegment().getOrigin().getId(), i.getId(), this.maxSpeed);
+		else
+			path = alg.getPath(map, this.getCurrentSegment().getDestination().getId(), i.getId(), this.maxSpeed);
 
 		for(Segment seg : path.getSegmentPath()) {
 			distance+= seg.getLength();
@@ -311,8 +313,6 @@ public class TruckAgent extends Agent {
 	 * @param areas List of existing areas
 	 */
 	public void generateFavouriteAreas(ArrayList<Area> areas) {
-		System.out.println("Areas a priorizar");
-		System.out.println(areas.toString());
 		ArrayList<Area> preferences = new ArrayList<>();
 		HashMap<Double,Area> bag = new HashMap<>();
 		
@@ -333,6 +333,7 @@ public class TruckAgent extends Agent {
 		}
 
 		this.favouriteAreas = preferences;
+		System.out.println("Areas favoritas " + this.getFavouriteAreas().toString());
 	}
 	
 	/**

@@ -40,7 +40,6 @@ public class CarSendingDataBehaviour extends Behaviour {
 			msg.setOntology("roadTwinsOntology");
 			// Ask to twin Segment of the current segment on other
 			//     cars in my sensor space
-			//TODO: Revise how to obtain the IAD of the twin segments
 			//      from Strings
 			List<String> twins = carAgent.getCurrentSegment().
 					                      getTwinSegments();
@@ -59,8 +58,7 @@ public class CarSendingDataBehaviour extends Behaviour {
 			carAgent.send(msg);
 			step++;
 			break;
-		case 1: 
-			//TODO: Revise how to manage all the responses from
+		case 1:
 			//      all the twin segments
 			ACLMessage req = myAgent.receive(mtTwins);
 			if (req!= null){

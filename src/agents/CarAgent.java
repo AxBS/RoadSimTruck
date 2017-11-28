@@ -250,11 +250,7 @@ public class CarAgent extends Agent {
 	 * @param origin ID of the intersection where the car is
 	 */
 	public void recalculate(String origin) {
-		
-		// A JGraph envision structure must be obteined from jgraphsT 
-		//     received by other cars in the twin segment of the 
-		//     current segment where the car is going.
-		// TODO:
+
 		this.path = this.alg.getPath(this.map, origin, 
 				               getFinalIntersection(), this.maxSpeed);
 	}

@@ -29,11 +29,9 @@ public class SolicitarPrereservaBehaviour extends Behaviour{
 		switch (step)
 		{
 			case 0:
-				System.out.println("SolicitarPrereservaBeha:PreReservarAreas()");
 				PreReservarArea();
 				break;
 			case 1:
-				System.out.println("SolicitarPrereservaBeha:PreReservaConfirmada()");
 				PreReservaConfirmada();
 				
 				break;
@@ -51,13 +49,13 @@ public class SolicitarPrereservaBehaviour extends Behaviour{
 			{		
 				vehicle.setDesignatedAreaFromString(msg.getSender().getLocalName());
 				vehicle.recalculate(vehicle.getCurrentSegment().getOrigin().getId(), vehicle.getDesignatedArea().getIntersection().getId());
-				System.out.println("El veh�culo " + vehicle.getLocalName() + " registra la asignaci�n en " + vehicle.getFavouriteAreas().toString());
+				System.out.println("El veh�culo " + vehicle.getLocalName() + " preregistra la asignaci�n en " + vehicle.getFavouriteAreas().toString());
 				
 			}
 			else
 			{
 				//vehicle.delAreaAsignada();
-				System.out.println("El veh�culo " + vehicle.getLocalName() + " se le deniega la asignaci�n en " + msg.getSender().getLocalName());
+				System.out.println("El veh�culo " + vehicle.getLocalName() + " se le deniega la preasignaci�n en " + msg.getSender().getLocalName());
 			}
 			step = 10;
 		}
@@ -75,15 +73,13 @@ public class SolicitarPrereservaBehaviour extends Behaviour{
 		}
 		else
 		{
-			System.out.println(vehicle.getLocalName() + " Entra en prereservar area!!");
 			if (AsignarAreaAReservar()) // Si tengo �rea para reservar reservo
 			{
-				System.out.println("El vehiculo " + vehicle.getLocalName() + " solicita reserva en: " + areaAReservar);
+				System.out.println("El vehiculo " + vehicle.getLocalName() + " solicita prereserva en: " + areaAReservar);
 						
 				ACLMessage msg = new ACLMessage(ACLMessage.CFP);
 				msg.addReceiver(new AID(areaAReservar, false));
 				msg.setOntology("prereserveOntology");
-				//TODO Saber que significa este reply
 				msg.setReplyWith("prereserveOntology" + "-" + vehicle.getLocalName() + "-" + areaAReservar + "-" + System.currentTimeMillis());
 				//vehicle.inc_Mensajes_sol();
 				vehicle.send(msg);
@@ -102,7 +98,7 @@ public class SolicitarPrereservaBehaviour extends Behaviour{
 				//Cambiamos el path por el nuevo destino
 				vehicle.recalculate(vehicle.getCurrentSegment().getOrigin().getId(), areaPref.getIntersection().getId());
 				
-				System.out.println("ESTOY EN SolicitarReserva. Envio a: " + areaPref + " registro ilegal de: " + vehicle.getLocalName());
+				System.out.println("ESTOY EN SolicitarReserva. Envio a: " + areaPref + " preregistro ilegal de: " + vehicle.getLocalName());
 				avisarAreaDeIlegal(areaPref.getId());
 				
 				step = 10;

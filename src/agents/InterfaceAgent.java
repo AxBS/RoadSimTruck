@@ -86,7 +86,7 @@ public class InterfaceAgent extends Agent{
 			//Launch the behaviour that will add cars
 			addBehaviour(new InterfaceAddCarBehaviour(this));
 			
-			//TODO Launch the behaviour that will add trucks
+			//Launch the behaviour that will add trucks
 			addBehaviour(new InterfaceAddTruckBehaviour(this));
 			
 			//This will listen for drawing instructions

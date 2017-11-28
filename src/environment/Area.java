@@ -119,7 +119,7 @@ public class Area {
 
 	@Override
 	public String toString() {
-		return "Area [locationX=" + intersection.getX()+ ", locationY=" + intersection.getY() + ", capacity=" + capacity + ", id=" + id + "]";
+		return "Area [ id=" + id + "]";
 	}
 	
 	

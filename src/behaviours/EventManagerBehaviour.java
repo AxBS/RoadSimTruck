@@ -113,7 +113,6 @@ public class EventManagerBehaviour extends CyclicBehaviour {
 							e.printStackTrace();
 						}
 					} else if (parts[0].equals("newTruck")) {
-							// TODO
 							// Revise properties of TRUCK.
 							try {
 								AgentController agent = this.agent.getTruckContainer().createNewAgent(
