@@ -23,7 +23,7 @@ public class RecepcionPrereservasBehaviour extends OneShotBehaviour{
 		ACLMessage reply = msg.createReply();	
 		reply.setReplyWith(msg.getReplyWith());
 		reply.setContent("");
-		reply.setOntology("prereserveOntologyReply");
+		reply.setOntology("prereserveOntology");
 
 		// Se puede reservar si las reservas + los trucks aparcados son < que los tracks que caben
 		if (area.getLstReservas().size() + area.getParking().size() < area.getArea().getCapacity()) {

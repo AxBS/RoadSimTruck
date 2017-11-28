@@ -1,5 +1,7 @@
 package agents;
 
+import behaviours.SolicitarPrereservaBehaviour;
+import environment.*;
 import jade.core.Agent;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
@@ -20,11 +22,6 @@ import java.util.Set;
 import org.json.JSONObject;
 
 import behaviours.TruckBehaviour;
-import environment.Area;
-import environment.Map;
-import environment.Path;
-import environment.Segment;
-import environment.Step;
 
 /**
  * This code represents a Truck, it will have an origin an a 
@@ -54,7 +51,7 @@ public class TruckAgent extends Agent {
 	private long timeToRest = 120; 
 
 	//Selected Area to stop
-	private float AreaX=317, AreaY=304;
+	private float AreaX=0, AreaY=0;
 	
 	
 	//Favourite area list
@@ -146,18 +143,12 @@ public class TruckAgent extends Agent {
 		
 		//Get the ratio of sensoring for this agentCar
 		ratio = (int) this.getArguments()[8];
-		
+
+		this.path = this.alg.getPath(this.map, this.initialIntersection,
+				this.finalIntersection, this.maxSpeed);
+
 		//Get the desired Path from the origin to the destination
-		this.path = alg.getPath(this.map, getInitialIntersection(),
-				getFinalIntersection(),
-				this.maxSpeed);
-
-		if(this.calculateDistanceFromSegments(this.path.getSegmentPath()) > this.maxDistanceToGo){
-			//Generas las areas favoritas
-			this.generateFavouriteAreas(this.map.getListAreas());
-			//TODO Behavior prereserva --> area
-		}
-
+		this.calculateWay(finalIntersection);
 		
 		//Starting point
 		setX(map.getIntersectionByID(getInitialIntersection()).
@@ -222,8 +213,6 @@ public class TruckAgent extends Agent {
 		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
 		//:::::::::::::::::::::::::::::::::::::
 		//TODO change to truckToSegmentOntology
-		//:::::::::::::::::::::::::::::::::::::
-		//TODO: Aquí hay que hacer una prereserva pero para ello tenemos que ver cuales son sus predilectos
 		msg.setOntology("carToSegmentOntology");
 		msg.setConversationId("register");
 		msg.addReceiver(next.getSegment().getSegmentAgent().getAID());
@@ -261,40 +250,52 @@ public class TruckAgent extends Agent {
 		    }
 	    }
 		//Runs the agent
-	    //TODO
-	    //Antes de añadir comportamiento de movimiento, necesitamos saber adonde vamos
-	    //Añadir comportamiento de negociación de area
 	    
 		addBehaviour(new TruckBehaviour(this, 50, this.drawGUI,this.timeToRest));
 		//addBehaviour(new CarReceivingDataBehaviour(this));
 
 	}
+
+	/**
+	 * Calcular el camino tanto la inicio como cada vez que acabemos
+	 * uno de los semitrayectos
+	 * */
+	public void calculateWay(String interFinal){
+		System.out.println("CalculateWay");
+		System.out.println("Distancia a la intersección --> " + this.getDistanceToIntersection(this.map.getIntersectionByID(interFinal)));
+		System.out.println("Maxima distacia --> " + this.maxDistanceToGo);
+		if(this.getDistanceToIntersection(this.map.getIntersectionByID(interFinal)) > this.maxDistanceToGo){
+			//Generas las areas favoritas
+			this.generateFavouriteAreas(this.map.getListAreas());
+			addBehaviour(new SolicitarPrereservaBehaviour(this, "-"));
+			// En la prereserva cambiaremos el path del coche para que vaya a ese sitio
+		} else{
+			//TODO Pensamos desde el origen y es más eficiente pensar desde el destino para no
+			//TODO tener que dar la vuelta
+			this.path = this.alg.getPath(this.map, this.getCurrentSegment().getOrigin().getId(),
+					this.finalIntersection, this.maxSpeed);
+		}
+	}
+
+
 	/*
 	 * Calcula la distancia hasta un area concreta desde nuestra posicción actual
 	 * @params  area Area hasta la que queremos calcular la distancia
 	 */
 	
-	private double getDistanceToArea(Area area) {
+	public double getDistanceToIntersection(Intersection i) {
 		double distance = 0;
-		
+
 		Path path;
 
-		Segment segmentToBegin;
-
-		if(this.getCurrentSegment()!=null)
-			segmentToBegin =  currentSegment;
-		else
-			segmentToBegin = alg.getPath(map, this.map.getIntersectionByID(this.getInitialIntersection()).getId(), area.getIntersection().getId(), this.maxSpeed)
-					.getSegmentPath().get(0);
-
-		path = alg.getPath(map, segmentToBegin.getOrigin().getId(), area.getIntersection().getId(), this.maxSpeed);
+		path = alg.getPath(map, this.getCurrentSegment().getOrigin().getId(), i.getId(), this.maxSpeed);
 
 		for(Segment seg : path.getSegmentPath()) {
 			distance+= seg.getLength();
 			
 			//Tenemos en cuenta la distancia desde la posición actual del camión hasta el inicio del segmento (intersección)
-			if(seg.getId().equals(segmentToBegin.getId())) {
-				double ini = segmentToBegin.getPkIni();
+			if(seg.getId().equals(getCurrentSegment().getId())) {
+				double ini = getCurrentSegment().getPkIni();
 				double pos = this.currentPk;
 				
 				distance -= Math.abs(ini-pos);
@@ -318,8 +319,8 @@ public class TruckAgent extends Agent {
 		
 		for(Area a:areas) {
 			//Filtramos aquellas Areas inalcanzables
-			if((this.maxDistanceToGo-this.distanceCovered)>=this.getDistanceToArea(a))
-				bag.put(this.getDistanceToArea(a), a);
+			if((this.maxDistanceToGo-this.distanceCovered)>=this.getDistanceToIntersection(a.getIntersection()))
+				bag.put(this.getDistanceToIntersection(a.getIntersection()), a);
 		}
 		
 		Set<String> keySet = (Set) bag.keySet();
@@ -373,15 +374,16 @@ public class TruckAgent extends Agent {
 	 *     if we are smart.
 	 * 
 	 * @param origin ID of the intersection where the car is
+	 * @param destination ID of the intersection where the car has to go
 	 */
-	public void recalculate(String origin) {
+	public void recalculate(String origin, String destination) {
 		
 		// A JGraph envision structure must be obteined from jgraphsT 
 		//     received by other cars in the twin segment of the 
 		//     current segment where the car is going.
 		// TODO:
 		this.path = this.alg.getPath(this.map, origin, 
-				               getFinalIntersection(), this.maxSpeed);
+				               destination, this.maxSpeed);
 	}
 
 	//Setters and getters
@@ -450,6 +452,8 @@ public class TruckAgent extends Agent {
 	}
 
 	public Segment getCurrentSegment() {
+		if(currentSegment == null)
+			return this.map.getIntersectionByID(this.initialIntersection).getOutSegments().get(0);
 		return currentSegment;
 	}
 
@@ -526,6 +530,40 @@ public class TruckAgent extends Agent {
 		this.timeToRest = timeToRest;
 	}
 
+
+	public ArrayList<Area> getFavouriteAreas() {
+		return favouriteAreas;
+	}
+
+	public void setFavouriteAreas(ArrayList<Area> favouriteAreas) {
+		this.favouriteAreas = favouriteAreas;
+	}
+
+	public Area getDesignatedArea() {
+		return designatedArea;
+	}
+
+	public void setDesignatedArea(Area designatedArea) {
+		this.designatedArea = designatedArea;
+	}
+
+	public String getActualDestination() {
+		return actualDestination;
+	}
+
+	public void setActualDestination(String actualDestination) {
+		this.actualDestination = actualDestination;
+	}
+
+	public void setPath(Path path) {
+		this.path = path;
+	}
+
+	public void setDesignatedAreaFromString(String areaId){
+		for(Area a : this.map.getListAreas())
+			if(a.getId().equals(areaId))
+				this.setDesignatedArea(a);
+	}
 
 }
 

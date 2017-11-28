@@ -36,8 +36,10 @@ public class TruckBehaviour extends CyclicBehaviour {
 	private boolean drawGUI;
 	private long previousTick;
 	private boolean stopped;
+	private boolean reserved = false;
 	private long timeToRest;
-	
+	private long tiempoDeParadaMedia;
+
 
 	public TruckBehaviour(TruckAgent a, long timeout, boolean drawGUI, long timeToRest) {
 
@@ -46,6 +48,7 @@ public class TruckBehaviour extends CyclicBehaviour {
 		this.topic = null;
 		previousTick = agent.getTini() - 1;
 		this.timeToRest = timeToRest;
+		this.tiempoDeParadaMedia = timeToRest;
 		
 		try {
 			TopicManagementHelper topicHelper =(TopicManagementHelper) 
@@ -69,43 +72,21 @@ public class TruckBehaviour extends CyclicBehaviour {
 		ACLMessage msg = myAgent.receive(MessageTemplate.MatchTopic(topic));
 
 		if (msg != null) {
-			
-			//TODO Asociar codigo siguiente con el funcionamiento del TruckBehaviour
-			
-//			if (msg.getConversationId().equals(TipoMensaje.ELIMINAR_RESERVAS) )
-//			{
-//				vehicle.addBehaviour(new EliminacionVehiculoBehaviour(msg.getSender().getLocalName()));
-//				System.out.println(vehicle.getLocalName() + " elimino reservas por eliminicacion de " + msg.getSender().getLocalName());
-//			}
-//			else if (msg.getConversationId().equals(TipoMensaje.NEGOCIACION_SOLICITAR_PREFERENCIAS))
-//			{
-//				vehicle.addBehaviour(new NegociacionVehiculoBehaviour(vehicle, msg));
-//			}
-//			else if (msg.getConversationId().equals(TipoMensaje.NEGOCIACION_ASIGNACION_RESERVAS) )
-//			{
-//				vehicle.addBehaviour(new AsignacionReservasVehiculosBehaviour(vehicle, msg));
-//				System.out.println(vehicle.getLocalName() + " voy a asignar reserva");
-//			}
-//			
-//			
-//			
-			
-			
+
 			//If truck is stopped, take a tick out of waiting time until waiting time is 0
 			if (stopped) {
 				//Truck dentro del area
 				timeToRest--;
 				//
 				
-
-				if (timeToRest <= 0)
+				if (timeToRest <= 0) {
 					//El truck sale del area
-					//TODO Avisar al area de que nos hemos ido
 					//TODO Desatar negociación para siguiente area destino si no podemos llegar al destino final
 					stopped = false;
-
-
-
+					reserved = false;
+					timeToRest = this.tiempoDeParadaMedia;
+					this.sendMsgWithoutConversationId("leavingParkingOntology", this.agent.getDesignatedArea().getAreaAgent().getAID(), new JSONObject());
+				}
 			} else {
 
 				long currentTick = Long.parseLong(msg.getContent());
@@ -132,12 +113,28 @@ public class TruckBehaviour extends CyclicBehaviour {
 					float AreaX = this.agent.getAreaX();
 					float AreaY = this.agent.getAreaY();
 
+					if(this.agent.getDesignatedArea() != null &&
+							this.agent.getDistanceToIntersection(this.agent.getDesignatedArea().getIntersection()) <= 30
+							&& !reserved) {
+						System.out.println("Mandamos un mensaje de reserva desde el TruckBehaviour");
+						reserved = true;
+						this.sendMsgWithoutConversationId("reserveOntology", this.agent.getDesignatedArea().getAreaAgent().getAID(), new JSONObject());
+						//Actualizamos el lugar en el que paramos
+						this.agent.setAreaX(this.agent.getDesignatedArea().getIntersection().getX());
+						this.agent.setAreaY(this.agent.getDesignatedArea().getIntersection().getY());
+					}
 					// Check if it is has arrived at the designated area.
 					// If it is in the vicinity, the truck stops for the desired
 					// time (ticks).
+
 					if (aprox(AreaX, currentX) && aprox(AreaY, currentY)) {
 						//Truck in the desigantes stopping point
-						//TODO avisar al area de que se ha llegado y aparcado
+						//TODO diferenciar entre un parking illegal y el guay
+						if(this.agent.getDesignatedArea() != null)
+							this.sendMsgWithoutConversationId("parkingOntology",this.agent.getDesignatedArea().getAreaAgent().getAID(), new JSONObject());
+						else
+							this.sendMsgWithoutConversationId("illegalParkingOntology",this.agent.getDesignatedArea().getAreaAgent().getAID(), new JSONObject());
+
 						System.out.println("::::::TRUCK RESTING::::::");
 						stopped = true;
 					}
@@ -177,8 +174,11 @@ public class TruckBehaviour extends CyclicBehaviour {
 									* (currentX - next.getDestinationX())
 									+ (currentY - next.getDestinationY()) * (currentY - next.getDestinationY()));
 						} else {
-
-							this.kill();
+							if(this.agent.getCurrentSegment().getDestination().getId().equals(this.agent.getFinalIntersection()))
+								this.kill();
+							else
+								System.out.println("Calculamos otra vez el area");
+								this.agent.calculateWay(this.agent.getFinalIntersection());
 							break;
 						}
 					}
@@ -285,6 +285,14 @@ public class TruckBehaviour extends CyclicBehaviour {
 		myAgent.send(msg);
 	}
 
+	public void sendMsgWithoutConversationId(String ontology, AID receiver, JSONObject obj){
+		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+		msg.setOntology(ontology);
+		msg.addReceiver(receiver);
+		msg.setContent(obj.toString());
+		myAgent.send(msg);
+	}
+
 	public void kill() {
 
 		//Done flag
@@ -317,7 +325,7 @@ public class TruckBehaviour extends CyclicBehaviour {
 	}
 	
 	public static boolean aprox(final double d1, final double d2) {
-	    return Math.abs(d1 - d2) < 2;
+		return Math.abs(d1 - d2) < 0.5;
 	}
 	
 	private boolean rested() {

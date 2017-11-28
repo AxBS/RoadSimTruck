@@ -55,13 +55,13 @@ public class AreaBehaviour extends CyclicBehaviour {
 				}
 
 			} else if (msg.getOntology().equals("reserveOntology")){
-
 				this.areaAgent.addBehaviour(new RecepcionReservasBehaviour(this.areaAgent, msg));
 
 			} else if (msg.getOntology().equals("parkingOntology")){
-
 				this.areaAgent.getParking().add(msg.getSender().getLocalName());
 				this.areaAgent.getLstReservas().remove(msg.getSender().getLocalName());
+				System.out.println(" ---------------- Parking Ontology ------------------");
+				System.out.println(this.areaAgent.getParking().toString());
 
 			} else if (msg.getOntology().equals("leavingParkingOntology")){
 

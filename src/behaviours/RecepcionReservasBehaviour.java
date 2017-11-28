@@ -23,7 +23,7 @@ public class RecepcionReservasBehaviour extends OneShotBehaviour{
 		ACLMessage reply = msg.createReply();	
 		reply.setReplyWith(msg.getReplyWith());
 		reply.setContent("");
-		reply.setOntology("reserveOntologyReply");
+		reply.setOntology("reserveOntology");
 
 		
 		// Se puede reservar

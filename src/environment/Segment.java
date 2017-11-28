@@ -258,6 +258,30 @@ public class Segment implements Serializable{
 	public void setDirection(String direction) {
 		this.direction = direction;
 	}
-	
-	
+
+	@Override
+	public String toString() {
+		return "Segment{" +
+				"id='" + id + '\'' +
+				", origin=" + origin.getId() +
+				", destination=" + destination.getId() +
+				", length=" + length +
+				", capacity=" + capacity +
+				", density=" + density +
+				", numberTracks=" + numberTracks +
+				", steps=" + steps +
+				", maxSpeed=" + maxSpeed +
+				", currentAllowedSpeed=" + currentAllowedSpeed +
+				", pkIni=" + pkIni +
+				", direction='" + direction + '\'' +
+				", drawGUI=" + drawGUI +
+				", twinSegments=" + twinSegments +
+				", segmentAgent=" + segmentAgent +
+				", mainContainer=" + mainContainer +
+				", serviceLevels=" + serviceLevels +
+				", currentServiceLevel=" + currentServiceLevel +
+				", segmentLogging=" + segmentLogging +
+				", loggingDirectory='" + loggingDirectory + '\'' +
+				'}';
+	}
 }
