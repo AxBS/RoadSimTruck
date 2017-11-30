@@ -220,28 +220,8 @@ public class TruckBehaviour extends CyclicBehaviour {
 							agent.setCurrentPk(next.getSegment().getPkIni());
 							// I don't know if remove the edge or if remove
 							// the content of the edge
-
-//							// Once rerouted, Delete data from future
-//							// Traffic related to this new segment
-//							agent.getFutureTraffic().delete(next.getSegment().getId());
-//							// Introducir el Tfin en TrafficData
-//							agent.getSensorTrafficData().setTfin(tfin);
-//							// Introduce current TrafficData into
-//							// the pastTraffic
-//							// First give the number of cars detected
-//							agent.getSensorTrafficData()
-//									.setNumCars(agent.getSensorTrafficData().getCarsPositions().size());
-//							agent.getPastTraffic().put(previousSegmentId, agent.getSensorTrafficData());
-//							// Start a new current trafficData by myself
-//							agent.setSensorTrafficData(new TrafficData());
-//							agent.getSensorTrafficData().setTini(tfin);
 						}
 
-						// If we are going under the maximum speed I'm
-						// allowed to go, or I can go, I am in a
-						// congestion, draw me differently
-						// I don't know if is necessary here but i
-						// change this in the destination
 						if (this.drawGUI) {
 							if (this.agent.getCurrentSpeed() < Math.min(this.agent.getMaxSpeed(),
 									this.agent.getCurrentSegment().getMaxSpeed())) {
@@ -255,8 +235,6 @@ public class TruckBehaviour extends CyclicBehaviour {
 
 						this.informSegment(next.getSegment(), "update");
 
-						// agent.addBehaviour(new
-						// CarSendingDataBehaviour(agent));
 						previousTick = Long.parseLong(msg.getContent());
 					}
 				}

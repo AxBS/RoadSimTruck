@@ -90,5 +90,17 @@ public class Step implements Serializable {
 
 	public void setDestinationY(int destinationY) {
 		this.destinationY = destinationY;
-	}	
+	}
+
+	@Override
+	public String toString() {
+		return "Step{" +
+				"id='" + id + '\'' +
+				", segment=" + segment.getId() +
+				", originX=" + originX +
+				", originY=" + originY +
+				", destinationX=" + destinationX +
+				", destinationY=" + destinationY +
+				'}';
+	}
 }

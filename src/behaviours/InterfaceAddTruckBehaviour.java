@@ -42,7 +42,8 @@ public class InterfaceAddTruckBehaviour extends CyclicBehaviour {
 		if (msg != null) {
 
 			JSONObject cont = new JSONObject(msg.getContent());
-
+			System.out.println("SE CREA UN NOUVO TRUCK");
+			System.out.println(cont.toString());
 			final String id = cont.getString("id");
 			final String seg = cont.getString("seg");
 			final float x = (float) cont.getInt("x");
@@ -54,33 +55,6 @@ public class InterfaceAddTruckBehaviour extends CyclicBehaviour {
 
 				@Override
 				public void run() {
-					//TODO Add recalculate x and y
-					ArrayList<Step> steps = (ArrayList<Step>) agent.getGraphicalMap().getSegmentByID(seg).getSteps();
-					for(Step step: steps) {
-						// Deberiamos considerar que se encuentre dentro de la recta
-						// pero para las pruebas que vamos a hacer no lo
-						//voy a considerar porque no tenemos tiempo
-						int maxX, maxY, minX, minY;
-						if (step.getDestinationX() > step.getOriginX()) {
-							maxX = step.getDestinationX();
-							minX = step.getOriginX();
-						} else {
-							minX = step.getDestinationX();
-							maxX = step.getOriginX();
-						}
-
-						if(step.getDestinationY() > step.getOriginY()){
-							maxY = step.getDestinationY();
-							minY = step.getOriginY();
-						} else {
-							minY = step.getDestinationY();
-							maxY = step.getOriginY();
-						}
-						// Tenemos el step en el que está
-						if(x <= maxX && x>= minX && y <= maxY && y >= minY ){
-
-						}
-					}
 					agent.getMap().addCar(myAgent.getLocalName(), id,
 							              algorithmType, x, y, false);
 				}

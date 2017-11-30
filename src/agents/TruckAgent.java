@@ -2,6 +2,7 @@ package agents;
 
 import behaviours.SolicitarPrereservaBehaviour;
 import environment.*;
+import environment.Map;
 import jade.core.Agent;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
@@ -13,11 +14,7 @@ import searchAlgorithms.Algorithm;
 import searchAlgorithms.AlgorithmFactory;
 import searchAlgorithms.Method;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.json.JSONObject;
 
@@ -110,24 +107,23 @@ public class TruckAgent extends Agent {
 		//Get the starting and final points of my trip
 
 		//Starting point
-		setX((int)this.getArguments()[1]);
-		setY((int)this.getArguments()[2]);
-		Segment segmentIni = this.map.getSegmentByID((String)this.getArguments()[3]);
+		float pkIni = (float) this.getArguments()[1];
+		Segment segmentIni = this.map.getSegmentByID((String)this.getArguments()[2]);
 		this.initialIntersection = segmentIni.getDestination().getId();
-		this.finalIntersection = (String) this.getArguments()[4];
+		this.finalIntersection = (String) this.getArguments()[3];
 		
 		//Get the speeds
-		this.maxSpeed = (int) this.getArguments()[5];
+		this.maxSpeed = (int) this.getArguments()[4];
 		this.currentSpeed = 0; //Se gestiona en el comportamiento 
 		                       // (int) this.getArguments()[4];
 
-		this.maxDistanceToGo = (double) this.getArguments()[6];
+		this.maxDistanceToGo = (double) this.getArguments()[5];
 		//Get the method we want
 		AlgorithmFactory factory = new AlgorithmFactory();
 		this.alg = null;
 
 
-		String routeType = (String) this.getArguments()[7];
+		String routeType = (String) this.getArguments()[6];
 		
 		if (routeType.equals("fastest")) {
 			
@@ -142,13 +138,13 @@ public class TruckAgent extends Agent {
 		}
 
 		//Is necessary draw the gui
-		this.drawGUI = (boolean) this.getArguments()[8];
+		this.drawGUI = (boolean) this.getArguments()[7];
 
 		//Get the initial time tick from eventManager
-		tini = (long) this.getArguments()[9];
+		tini = (long) this.getArguments()[8];
 		
 		//Get the ratio of sensoring for this agentCar
-		ratio = (int) this.getArguments()[10];
+		ratio = (int) this.getArguments()[9];
 
 		this.path = this.alg.getPath(this.map, this.initialIntersection,
 				this.finalIntersection, this.maxSpeed);
@@ -184,7 +180,9 @@ public class TruckAgent extends Agent {
 		//An unique identifier for the car
 		this.id = getName().toString();
 
-		
+		//TODO corregir la x e y
+		this.calculateCoordinatesFromPk(pkIni, segmentIni);
+
 		if(this.drawGUI){
 			//We notify the interface (send msg to InterfaceAgent) about the new truck
 			ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
@@ -369,6 +367,98 @@ public class TruckAgent extends Agent {
 		
 		
 	}
+	/**
+	 * Calcular la x e y en función del pk
+	 * */
+	public void calculateCoordinatesFromPk(float pkToStart, Segment s){
+		System.out.println("----------------------------------------------");
+		System.out.println("----------------------------------------------");
+		System.out.println("----------------------------------------------");
+		System.out.println("CALCULATE COORDINATES FROM PK");
+		LinkedList<Step> steps =(LinkedList<Step>) s.getSteps();
+		System.out.println("Steps --> " + steps.toString());
+		float pkIni = s.getPkIni();
+		System.out.println("Segment pk ini --> " + pkIni);
+		float distFin = pkToStart-pkIni;
+		System.out.println("Distancia final --> " + distFin);
+		double segLength = s.getLength();
+		System.out.println("Distancia segment --> " + segLength);
+		//Calculamos la proporción del pk en cada step
+		ArrayList<Double> distanceStep = new ArrayList<>();
+		for(Step st: steps)
+			distanceStep.add(Math.sqrt(Math.pow((st.getDestinationX()-st.getOriginX()),2.f)) + Math.pow((st.getDestinationY()-st.getOriginY()),2.f));
+		System.out.println("Distancia en px de steps --> " + distanceStep.toString());
+		//Sumarlas todas
+		double distTotalSteps = 0;
+		for(double d: distanceStep)
+			distTotalSteps+= d;
+		System.out.println("Distancia total de los steps --> " + distTotalSteps);
+
+		//Sacar los km de cada step
+		ArrayList<Double> kmStep = new ArrayList<>();
+		for(double d: distanceStep)
+			kmStep.add((d*segLength)/distTotalSteps);
+
+		System.out.println("Km de los steps --> " + kmStep.toString());
+		Step stepToStart = null;
+		double distanceAux = 0;
+		int i = 0;
+		for(double d: kmStep) {
+			distanceAux += d;
+			if (distanceAux > pkIni){
+				stepToStart = steps.get(i);
+				break;
+			}
+			i++;
+		}
+
+		System.out.println("Distancia del step en el que te has pasado -->" + distanceAux);
+		System.out.println("Step en el que inicias --> " + stepToStart);
+
+		//Tenemos el step
+		if(stepToStart == null){
+			System.out.println("No ha encontrado el step. ALgo ha fallado");
+		}else {
+			int xStep = stepToStart.getOriginX();
+			int yStep = stepToStart.getOriginY();
+			double distancFromIniStep = distFin;
+			int indice = i;
+			while(indice > 0){
+				System.out.println("Indice dentro de los km --> " + indice);
+				System.out.println("Indice total --> " + i);
+				distancFromIniStep -= kmStep.get(indice);
+				indice--;
+			}
+			System.out.println("Distancia from init step --> " + distancFromIniStep);
+			int yToModify = (int)(Math.abs(stepToStart.getDestinationY()-stepToStart.getOriginY())/kmStep.get(i)*distancFromIniStep);
+			int xToModify = (int)(Math.abs(stepToStart.getDestinationX()-stepToStart.getOriginX())/kmStep.get(i)*distancFromIniStep);
+			System.out.println(" y - " + (int)(Math.abs(stepToStart.getDestinationY()-stepToStart.getOriginY())/kmStep.get(i)*distancFromIniStep));
+			System.out.println(" x - " + (int)(Math.abs(stepToStart.getDestinationX()-stepToStart.getOriginX())/kmStep.get(i)*distancFromIniStep));
+
+			//Pensado en la dirección de la recta
+			if(stepToStart.getDestinationX() > stepToStart.getOriginX() ){
+				xToModify += stepToStart.getOriginX();
+			} else{
+				xToModify = stepToStart.getOriginX() - xToModify;
+			}
+
+			if(stepToStart.getDestinationY() > stepToStart.getOriginY() ){
+				yToModify += stepToStart.getOriginY();
+			} else{
+				yToModify = stepToStart.getOriginY() - yToModify;
+			}
+
+			System.out.println("xFinal --> " + xToModify);
+			System.out.println("yFinal --> " + yToModify);
+
+			setX(xToModify);
+			setY(yToModify);
+		}
+		System.out.println("---------------------------------------------");
+		System.out.println("---------------------------------------------");
+		System.out.println("---------------------------------------------");
+	}
+
 
 	/**
 	 * Recalculate the route, this will be called from the behaviour 

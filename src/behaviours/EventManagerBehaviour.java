@@ -119,11 +119,11 @@ public class EventManagerBehaviour extends CyclicBehaviour {
 										"truck" + Long.toString(currentTick) + Integer.toString(counter),
 										"agents.TruckAgent",
 										new Object[] { this.agent.getMap(),
-										/* x,y */ Integer.parseInt(parts[2]), Integer.parseInt(parts[3])
-										/*segOrigen, IntDest*/	 ,parts[4],parts[5],
-										/* maxSpeed truck */ 	 Integer.parseInt(parts[6]),
-										/* max km to go*/		 Double.parseDouble(parts[8]),
-										/* alg type */ 			 parts[7],
+										/* pk */ Float.parseFloat(parts[2]),
+										/*segOrigen, IntDest*/	 parts[3],parts[4],
+										/* maxSpeed truck */ 	 Integer.parseInt(parts[5]),
+										/* max km to go*/		 Double.parseDouble(parts[7]),
+										/* alg type */ 			 parts[6],
 										/* drawGUI */ 			 this.drawGUI,
 										/* Initial time */ 		 currentTick,
 										/* sensor ratio */ 		 10 });
