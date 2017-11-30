@@ -1,33 +1,22 @@
 package view;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Image;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSlider;
-import javax.swing.JTextArea;
-import javax.swing.Timer;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -118,7 +107,7 @@ public class CanvasWorld extends JFrame
 		canvasConstraints.gridx = 0; //Select column
 		canvasConstraints.gridy = 0; //Select row
 
-		contentPane = new MapPanel();
+		contentPane = new MapPanel(this.map);
 		this.add(contentPane, canvasConstraints);
 
 		//Add a toolbar part, where 
@@ -308,9 +297,101 @@ public class CanvasWorld extends JFrame
 		contentPane.setCars(cars);
 	}
 
+
+	public class infoAreaPanel extends JFrame{
+
+		private static final long serialVersionUID = 1L;
+		private JPanel contentPane;
+
+		ArrayList<String> listIlegagales;
+		ArrayList<String> listPrereservas;
+		ArrayList<String> listParking;
+		ArrayList<String> listReservas;
+
+
+		public infoAreaPanel(AreaAgent areaAgent){
+
+			setBounds(100, 100, 190, 180);
+			contentPane = new JPanel();
+			contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+			contentPane.setLayout(new BorderLayout(0, 0));
+			setContentPane(contentPane);
+
+			JPanel mainPanel = new JPanel();
+			mainPanel.setLayout(new FlowLayout());
+
+			this.setTitle(areaAgent.getArea().getId());
+
+			listIlegagales = areaAgent.getLstIlegales();
+			listPrereservas = areaAgent.getLstPreReservas();
+			listParking = areaAgent.getParking();
+			listReservas = areaAgent.getLstReservas();
+
+			JLabel lblReservasA = new JLabel("Numero de reservas: ");
+			JLabel lblReservasB = new JLabel(listReservas.size()+"");
+
+			mainPanel.add(lblReservasA, BorderLayout.CENTER);
+			mainPanel.add(lblReservasB, BorderLayout.CENTER);
+
+			JLabel lblParkingA = new JLabel("Numero de aparcados: ");
+			JLabel lblParkingB = new JLabel(listParking.size()+"");
+
+			mainPanel.add(lblParkingA, BorderLayout.CENTER);
+			mainPanel.add(lblParkingB, BorderLayout.CENTER);
+
+			JLabel lblIlegalsA = new JLabel("Numero de ilegales: ");
+			JLabel lblIlegalsB = new JLabel(listIlegagales.size()+"");
+
+			mainPanel.add(lblIlegalsA, BorderLayout.CENTER);
+			mainPanel.add(lblIlegalsB, BorderLayout.CENTER);
+
+
+
+			JButton accept = new JButton("Aceptar");
+			accept.setForeground(Color.BLUE);
+
+			JButton closeArea = new JButton("Cerrar Área");
+			accept.setForeground(Color.RED);
+
+
+			accept.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+
+					//Close JFrame
+					dispose();
+				}
+			});
+
+			accept.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+
+					//TODO FUNCIONALIDAD DE CERRAR AREA
+
+				}
+			});
+
+
+
+
+
+
+			mainPanel.add(accept, BorderLayout.SOUTH);
+			mainPanel.add(closeArea, BorderLayout.SOUTH);
+
+			contentPane.add(mainPanel, BorderLayout.CENTER);
+
+		}
+
+
+	}
+
+
+
+
 	public class MapPanel extends JPanel{
 
 		private static final long serialVersionUID = 1L;
+		private Map map;
 		private HashMap<String, Mobile> carPositions;
 		
 
@@ -322,13 +403,59 @@ public class CanvasWorld extends JFrame
 		/**
 		 * Default constructor.
 		 */
-		public MapPanel() {
+		public MapPanel(Map map) {
+			this.map = map;
 			this.carPositions =  new HashMap<String, Mobile>();
 			backGround = mapImage.getImage();
+			int xMargin = 15;
+			int yMargin = 15;
 
 			this.setBorder(new EmptyBorder(1, 1, 1, 1));
 			this.setDoubleBuffered(true);
 			this.setLayout(null);
+
+			addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+
+
+
+					boolean exists = false; 									// Stores if clicked point is already a stored intersection
+					Point p = e.getPoint();									// Point that has been clicked (X,Y)
+					Area clickedArea = new Area();	// Intersection that has been clicked (in case exists=true)
+
+					// First we check if there is an intersection in a defined radius of the clicked point
+
+					ArrayList<Area> listAreas  = map.getListAreas();
+					ArrayList<Intersection> posAreas = new ArrayList<Intersection>();
+
+					for (Area a:listAreas){
+						posAreas.add(a.getIntersection());
+					}
+
+					for (Area a : listAreas) {
+						if (Math.abs((int) p.getX() - a.getIntersection().getX()) < xMargin
+								&& Math.abs((int) p.getY() - a.getIntersection().getY()) < yMargin) {
+							exists = true;
+							clickedArea = a;
+							break;
+						}
+					}
+
+					if(exists){
+
+						infoAreaPanel panel = new infoAreaPanel(clickedArea.getAreaAgent());
+						panel.setVisible(true);
+
+					} else
+						JOptionPane.showMessageDialog(null,
+								"Clic cerca de una Área para mostrar su información.");
+				}
+			});
+
+
+
+
 		}
 
 		/**
