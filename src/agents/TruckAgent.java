@@ -104,27 +104,30 @@ public class TruckAgent extends Agent {
 			//simply kill it for now.
 			this.takeDown();
 		}
-		
-		//Is necessary draw the gui
-		this.drawGUI = (boolean) this.getArguments()[6];
-		this.maxDistanceToGo = (double) this.getArguments()[4];
 
 		//Get the map from an argument
 		this.map = (Map) this.getArguments()[0];
 		//Get the starting and final points of my trip
-		this.initialIntersection = (String) this.getArguments()[1];
-		this.finalIntersection = (String) this.getArguments()[2];
+
+		//Starting point
+		setX((int)this.getArguments()[1]);
+		setY((int)this.getArguments()[2]);
+		Segment segmentIni = this.map.getSegmentByID((String)this.getArguments()[3]);
+		this.initialIntersection = segmentIni.getDestination().getId();
+		this.finalIntersection = (String) this.getArguments()[4];
 		
 		//Get the speeds
-		this.maxSpeed = (int) this.getArguments()[3];
+		this.maxSpeed = (int) this.getArguments()[5];
 		this.currentSpeed = 0; //Se gestiona en el comportamiento 
 		                       // (int) this.getArguments()[4];
 
+		this.maxDistanceToGo = (double) this.getArguments()[6];
 		//Get the method we want
 		AlgorithmFactory factory = new AlgorithmFactory();
 		this.alg = null;
-		
-		String routeType = (String) this.getArguments()[5];
+
+
+		String routeType = (String) this.getArguments()[7];
 		
 		if (routeType.equals("fastest")) {
 			
@@ -138,23 +141,20 @@ public class TruckAgent extends Agent {
 			
 		}
 
+		//Is necessary draw the gui
+		this.drawGUI = (boolean) this.getArguments()[8];
+
 		//Get the initial time tick from eventManager
-		tini = (long) this.getArguments()[7];
+		tini = (long) this.getArguments()[9];
 		
 		//Get the ratio of sensoring for this agentCar
-		ratio = (int) this.getArguments()[8];
+		ratio = (int) this.getArguments()[10];
 
 		this.path = this.alg.getPath(this.map, this.initialIntersection,
 				this.finalIntersection, this.maxSpeed);
 
 		//Get the desired Path from the origin to the destination
 		this.calculateWay(finalIntersection);
-		
-		//Starting point
-		setX(map.getIntersectionByID(getInitialIntersection()).
-				                                          getX());
-		setY(map.getIntersectionByID(getInitialIntersection()).
-				                                          getY());
 		
 		if(this.drawGUI){
 			//Find the interface agent
@@ -190,13 +190,13 @@ public class TruckAgent extends Agent {
 			ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
 			msg.addReceiver(interfaceAgent.getName());
 			JSONObject truckData = new JSONObject();
+			truckData.put("seg", segmentIni);
 			truckData.put("x", this.x);
 			truckData.put("y", this.y);
 			truckData.put("id", this.id);
 			truckData.put("algorithmType", this.algorithmType);
 			msg.setContent(truckData.toString());
-			//TODO change to newTruckOntology
-			msg.setOntology("newCarOntology");
+			msg.setOntology("newTruckOntology");
 			send(msg);
 		}
 		//:::::::::::::::::::::::::::::::::::::		//:::::::::::::::::::::::::::::::::::::		//:::::::::::::::::::::::::::::::::::::

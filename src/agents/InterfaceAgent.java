@@ -30,6 +30,7 @@ public class InterfaceAgent extends Agent{
 	public static final int MAXWORLDY = 720;
 
 	private CanvasWorld map;
+	private Map graphicalMap;
 	
 	private DFAgentDescription timeKeeperAgent;
 
@@ -70,7 +71,7 @@ public class InterfaceAgent extends Agent{
 		if (drawGUI) {
 
 			//Get the map from an argument
-			Map graphicalMap = (Map) this.getArguments()[0];
+			this.graphicalMap = (Map) this.getArguments()[0];
 			
 			InterfaceAgent me = this;
 
@@ -115,5 +116,9 @@ public class InterfaceAgent extends Agent{
 	//Setters and getters
 	public CanvasWorld getMap() {
 		return map;
+	}
+
+	public Map getGraphicalMap() {
+		return graphicalMap;
 	}
 }
