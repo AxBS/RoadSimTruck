@@ -31,8 +31,8 @@ public class NegociacionAreaBehaviour extends Behaviour{
 	
 	// Preferencias guardadas como map <vehiculo, lstPreferencias>
 	private HashMap<String, ArrayList<String>> preferencias;	
-	private HashMap<String,Integer> tiemposConduccion;
-	private HashMap<String,Integer> posicionesVehiculos;
+	private HashMap<String,Double> tiemposConduccion;
+	private HashMap<String,Double> posicionesVehiculos;
 	private List<String> solucionGanadora = new ArrayList<String>();
 	
 	private long t_ini, t_fin; // Para calcular los tiempos de negociacion
@@ -45,8 +45,8 @@ public class NegociacionAreaBehaviour extends Behaviour{
 		lstVehiculos = new ArrayList<String>(area.getLstReservas());
 		lstVehiculos.add(vehicle);
 		preferencias = new HashMap<String, ArrayList<String>>();
-		tiemposConduccion = new HashMap<String, Integer>();
-		posicionesVehiculos = new HashMap<String, Integer>();
+		tiemposConduccion = new HashMap<String, Double>();
+		posicionesVehiculos = new HashMap<String, Double>();
 		lstAreasAlcanzables = new ArrayList<String>();
 		t_ini = System.currentTimeMillis();
 	}
@@ -211,9 +211,9 @@ public class NegociacionAreaBehaviour extends Behaviour{
 */			
 			preferencias.put(msg.getSender().getLocalName().trim(), lstPreferidas);		
 			lstAreasAlcanzables = (ArrayList<String>) UnionListas(lstAreasAlcanzables, (Arrays.asList(tmp)));
-			posicionesVehiculos.put(msg.getSender().getLocalName().trim(), Integer.parseInt(msg.getEncoding()));
+			posicionesVehiculos.put(msg.getSender().getLocalName().trim(), Double.parseDouble(msg.getEncoding()));
 			// El tiempo de conduccion se manda en InReplyTo
-			tiemposConduccion.put(msg.getSender().getLocalName().trim(), Integer.parseInt(msg.getInReplyTo()));
+			tiemposConduccion.put(msg.getSender().getLocalName().trim(), Double.parseDouble(msg.getInReplyTo()));
 		}
 		else
 			block();
@@ -339,8 +339,8 @@ public class NegociacionAreaBehaviour extends Behaviour{
 				int valor = (preferencias.get(v).indexOf(a) >= 0) ? lstAreasAlcanzables.size() - preferencias.get(v).indexOf(a) : 0;
 				//int tc = (tiemposConduccion.get(v) * 100)/area.getTiempoMaxConduccion();
 				//TODO Mirar la ratio para que el resultado sea similar
-				int tc = tiemposConduccion.get(v);
-				int calculo = valor*tc;
+				double tc = tiemposConduccion.get(v);
+				double calculo = valor*tc;
 				strPesos.append(calculo + "   ");
 				total += calculo;				
 			}

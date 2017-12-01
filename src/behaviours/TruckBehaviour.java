@@ -40,6 +40,7 @@ public class TruckBehaviour extends CyclicBehaviour {
 	private long timeToRest;
 	private long tiempoDeParadaMedia;
 
+	private MessageTemplate mtPrereserveFails =	MessageTemplate.MatchOntology("getTruckPreferencesOntology");
 
 	public TruckBehaviour(TruckAgent a, long timeout, boolean drawGUI, long timeToRest) {
 
@@ -68,9 +69,16 @@ public class TruckBehaviour extends CyclicBehaviour {
 	@Override
 	public void action() {
 
+
+		ACLMessage msgFailPrereserve = myAgent.receive(mtPrereserveFails);
+		if(msgFailPrereserve != null){
+			System.out.println("NOS HAN RECHAZADO");
+			agent.addBehaviour(new NegociacionVehiculoBehaviour(agent,msgFailPrereserve ));
+		}
+
+
 		// Block until tick is received
 		ACLMessage msg = myAgent.receive(MessageTemplate.MatchTopic(topic));
-
 		if (msg != null) {
 
 			//If truck is stopped, take a tick out of waiting time until waiting time is 0
@@ -85,6 +93,7 @@ public class TruckBehaviour extends CyclicBehaviour {
 					stopped = false;
 					reserved = false;
 					timeToRest = this.tiempoDeParadaMedia;
+					agent.setDistanceCovered(0);
 					this.sendMsgWithoutConversationId("leavingParkingOntology", this.agent.getDesignatedArea().getAreaAgent().getAID(), new JSONObject());
 				}
 			} else {

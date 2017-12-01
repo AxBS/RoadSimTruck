@@ -198,10 +198,6 @@ public class TruckAgent extends Agent {
 			send(msg);
 		}
 		//:::::::::::::::::::::::::::::::::::::		//:::::::::::::::::::::::::::::::::::::		//:::::::::::::::::::::::::::::::::::::
-		//:::::::::::::::::::::::::::::::::::::		//:::::::::::::::::::::::::::::::::::::		//:::::::::::::::::::::::::::::::::::::
-		//:::::::::::::::::::::::::::::::::::::		//:::::::::::::::::::::::::::::::::::::		//:::::::::::::::::::::::::::::::::::::
-		//:::::::::::::::::::::::::::::::::::::		//:::::::::::::::::::::::::::::::::::::		//:::::::::::::::::::::::::::::::::::::
-		//:::::::::::::::::::::::::::::::::::::		//:::::::::::::::::::::::::::::::::::::		//:::::::::::::::::::::::::::::::::::::
 
 		// Set the initial values for the truckAgent on the road
 		Step next = getPath().getGraphicalPath().get(0);
@@ -257,6 +253,8 @@ public class TruckAgent extends Agent {
 	/**
 	 * Calcular el camino tanto la inicio como cada vez que acabemos
 	 * uno de los semitrayectos
+	 *
+	 * @param interFinal Id de la intersección a la que queremos llegar
 	 * */
 	public void calculateWay(String interFinal){
 		System.out.println("CalculateWay");
@@ -372,8 +370,6 @@ public class TruckAgent extends Agent {
 	 * */
 	public void calculateCoordinatesFromPk(float pkToStart, Segment s){
 		System.out.println("----------------------------------------------");
-		System.out.println("----------------------------------------------");
-		System.out.println("----------------------------------------------");
 		System.out.println("CALCULATE COORDINATES FROM PK");
 		LinkedList<Step> steps =(LinkedList<Step>) s.getSteps();
 		System.out.println("Steps --> " + steps.toString());
@@ -454,8 +450,6 @@ public class TruckAgent extends Agent {
 			setX(xToModify);
 			setY(yToModify);
 		}
-		System.out.println("---------------------------------------------");
-		System.out.println("---------------------------------------------");
 		System.out.println("---------------------------------------------");
 	}
 
@@ -650,10 +644,31 @@ public class TruckAgent extends Agent {
 		this.path = path;
 	}
 
+	public double getDistanceCovered() {
+		return distanceCovered;
+	}
+
+	public void setDistanceCovered(double distanceCovered) {
+		this.distanceCovered = distanceCovered;
+	}
+
 	public void setDesignatedAreaFromString(String areaId){
 		for(Area a : this.map.getListAreas())
 			if(a.getId().equals(areaId))
 				this.setDesignatedArea(a);
+	}
+
+	public java.util.Map getLstAreas(){
+		HashMap<String, Area> map = new HashMap<String, Area>();
+		for(Area a: this.getFavouriteAreas()){
+			map.put(a.getId(), a);
+		}
+
+		return map;
+	}
+
+	public double getKmToStop(){
+		return this.maxDistanceToGo - this.distanceCovered;
 	}
 
 }
