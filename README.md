@@ -16,11 +16,12 @@ el trayecto de la manera óptima, con el mínimo número de paradas.
 
 Los siguientes conceptos son necesarios para la compresión del funcionamiento de RoadSimTruck
 
-+ Area -
-+ Intersección -
-+ Segmento -
-+ Step -
-+ Truck -
++ Area - Elemento en el que los camiones pueden realizar un estacionamiento (Desarrollado como una intersección).
++ Intersección - Punto de cambio entre vías. Puede ser una roton, una salida de la vía, una entrada en la via, un cambio en el número de cariles o en general
+cualquier cambio en las características de la vía.
++ Segmento - Carretera que transcurre entre una intersección de origen y una intersección de destino.
++ Step - División de segmentos en parcela para adecuar la carretera al mapa.
++ Truck - Camión que aparece en un punto concreto de la carretera con una intersección de destino, calcula su intinerario y se dirige al destino.
 
 
 Version Control
@@ -36,7 +37,16 @@ Además de esto, se insta a utilizar descripciones de commit extensas y explicat
 
 #Dependencias
 
-Las principales dependencias del proyecto son JADE (http://jade.tilab.com/download/jade/) y JGraphT (http://jgrapht.org/). Para poder ejecutar el proyecto es necesario añadir las librerias de ambas dependencias.
+Las principales dependencias del proyecto son [JADE](http://jade.tilab.com/download/jade/) y [JGraphT](http://jgrapht.org/). Para poder ejecutar el proyecto es necesario añadir las librerias de ambas dependencias.
+
+#Funcionamiento 
+
+
+#Screenshot
+
+Imagen general de RoadSim
+
+![I once had chickens](https://raw.githubusercontent.com/pjimenezmateo/RoadSim/master/screenshot.png)
 
 #ToDo
 Tenemos que hacer las siguientes pruebas:
@@ -53,3 +63,9 @@ Test 4 - Todos aparcados ilegales
 
 Tenemos que sacar un fichero de configuración de Jose 
 o algo así y hemos de sacar un log.
+
+```javascript
+function(){
+    test
+}
+```
