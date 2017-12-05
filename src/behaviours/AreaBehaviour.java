@@ -19,10 +19,12 @@ public class AreaBehaviour extends CyclicBehaviour {
 			MessageTemplate.or(
 			MessageTemplate.or(
 			MessageTemplate.or(
+			MessageTemplate.or(
 			MessageTemplate.MatchOntology("prereserveOntology"),
 			MessageTemplate.MatchOntology("reserveOntology")),
 			MessageTemplate.MatchOntology("parkingOntology")),
 			MessageTemplate.MatchOntology("leavingParkingOntology")),
+			MessageTemplate.MatchOntology("leavingIllegalParkingOntology")),
 			MessageTemplate.MatchOntology("illegalParkingOntology"));
 	private AreaAgent areaAgent;
 
@@ -70,7 +72,8 @@ public class AreaBehaviour extends CyclicBehaviour {
 			} else if (msg.getOntology().equals("illegalParkingOntology")){
 
 				this.areaAgent.doIllegalParking(msg.getSender().getLocalName());
-			}
+			} else if (msg.getOntology().equals("leavingIllegalParkingOntology"))
+				this.areaAgent.getLstIlegales().remove(msg.getSender().getLocalName());
 		}
 		else if (areaAgent.getBufferNegociaciones().size() > 0)
 		{

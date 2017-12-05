@@ -55,30 +55,26 @@ public class NegociacionAreaBehaviour extends Behaviour{
 	public void action() {
 		switch (step) {
 		case 0:
-			solicitarPreferenciasVehiculos();	
+			System.out.println("-Solicitando preferencias");
+			solicitarPreferenciasVehiculos();
 			step = 1;
 			break;
 		case 1:
 			obtenerPreferenciasVehiculos();
+			System.out.println("-Preferencias obtenidas");
 			// Hemos recibido ya todas las preferencias de los vehiculos
-			if (preferencias.size() == lstVehiculos.size()) 
+			if (preferencias.size() == lstVehiculos.size()) {
 				step = 2;
+			}
 			break;
 		case 2:
 			CalcularSoluciones();
-			System.out.println("Calcular Ganador de negociacion id " + idNegociacion);
+			System.out.println("-Calculado Ganador de negociacion id " + idNegociacion);
 			step = 3;
 			break;
 		case 3:
-			if (solucionGanadora != null && !solucionGanadora.isEmpty())
-			{
-				EnviarNuevasReservas();
-			}
-			else // YA NO ENTRARA NUNCA
-			{					
-				System.out.println("NEGOCIACION: " + idNegociacion + " SIN SOLUCION");
-				System.out.println("Veh�culo " + lstVehiculos.get(lstVehiculos.size()-1) + " aparca sin reserva en Area " + area.getLocalName());
-			}						
+			System.out.println("-Enviamos nuevas reservas");
+			EnviarNuevasReservas();
 			step = 10;
 			break;
 		default: break;
@@ -91,6 +87,7 @@ public class NegociacionAreaBehaviour extends Behaviour{
 	//Con la siguiente area
 	private void EnviarNuevasReservas() {
 		HashMap<String, ArrayList<String>> soluciones = new HashMap<String, ArrayList<String>>();
+		System.out.println("Solucion ganadora --> " + solucionGanadora.toString());
 		for (int i = 0; i < solucionGanadora.size(); i++) {
 			String a = solucionGanadora.get(i);
 			String v = lstVehiculos.get(i);
@@ -101,18 +98,21 @@ public class NegociacionAreaBehaviour extends Behaviour{
 				System.err.println("Lista de la solucion: " + solucionGanadora.size());
 				System.err.println("Lista de vehiculos  : " + lstVehiculos.size());
 			}
-				
+
+			System.out.println("Id area [ " + a + " ] - LocalName[ " + area.getLocalName() + " ]");
 			if (a.compareTo(area.getLocalName()) == 0)
 			{			
 				if (soluciones.containsKey(a)) {
 					ArrayList<String> lst = soluciones.get(a);
-					lst.add(v);				
+					lst.add(v);
+					System.out.println("En el area " + a + " - " + lst.toString());
 					soluciones.put(a, lst);				
 				}
 				else
 				{
 					ArrayList<String> lst = new ArrayList<String>();
-					lst.add(v);					
+					lst.add(v);
+					System.out.println("En el area " + a + " - " + lst.toString());
 					soluciones.put(a, lst);
 				}
 			}
@@ -121,9 +121,12 @@ public class NegociacionAreaBehaviour extends Behaviour{
 		
 		area.deleteLstPrereservas();
 		// A�ado al area todos los vehiculos en la lista de soluciones
-		for (String v : soluciones.get(area.getLocalName())) {
-			if (!area.getLstReservas().contains(v.toString().trim()))
-				area.getLstReservas().add(v.toString().trim());						
+		System.out.println("Soluciones NegoArea --> " + soluciones.toString());
+		if(soluciones.get(area.getLocalName()) != null) {
+			for (String v : soluciones.get(area.getLocalName())) {
+				if (!area.getLstReservas().contains(v.toString().trim()))
+					area.getLstReservas().add(v.toString().trim());
+			}
 		}
 		System.out.println(area.getAID().getLocalName() + " REASIGNACION POR NEGOCIACION. Ahora estan: " + area.getLstReservas() );
 		
@@ -135,13 +138,16 @@ public class NegociacionAreaBehaviour extends Behaviour{
 			
 		// Enviamos un mensaje al vehiculo al que se le cancela la reserva
 		// Tambien al que se le acepta la reserva, si es el �ltimo (el que lo solicit�)
-		
+		System.out.println("ListVehiculos --> " + lstVehiculos);
 		for (int i = 0; i < lstVehiculos.size(); i++) {
 			msg.clearAllReceiver();
+			String v = lstVehiculos.get(i);
+
+			System.out.println("v NEgociación --> " + v);
+
 			if (solucionGanadora.size()>0) //TODO: numca deberia de ser 0
 			{
 				String a = solucionGanadora.get(i);
-				String v = lstVehiculos.get(i);
 				if (a.compareTo(area.getLocalName()) == 0)
 				{
 					if (i == lstVehiculos.size()-1)
@@ -164,8 +170,15 @@ public class NegociacionAreaBehaviour extends Behaviour{
 					area.send(msg);	
 				}
 			}
-			else
+			else {
+				System.out.println("Se lanza el mensaje de reserva ilegal");
+				msg.setOntology("mustDoIllegalParkingOntology");
+				msg.setReplyWith(idNegociacion);
+				msg.addReceiver(new AID(v, false));
+				msg.setContent(area.getLocalName());
+				area.send(msg);
 				System.out.println("------->>>  SOLUCION GANADORA ES 0");
+			}
 		}
 			
 	}
@@ -246,15 +259,19 @@ public class NegociacionAreaBehaviour extends Behaviour{
 		if (maxNumPref == 1) //Caso especial solo se negocia por un area
 		{
 		      System.out.println("Solo habia una preferencia " + area.getLocalName());
+		      System.out.println("Preferencias -- " + preferencias.toString());
 		      for (int i = 0; i < preferencias.size(); i++)
 		      {
 		    	  List<String> solucion = new ArrayList<String>();
 		    	  for (int j = 0; j < preferencias.size(); j++)
 		    	  {
-		    		  if (i == j)
-		    			  solucion.add("NO");
-		    		  else
-		    			  solucion.add(area.getLocalName());
+		    		  if (i == j) {
+						  //solucion.add("NO");
+						  System.out.println("Añadido un no a las soluciones");
+					  }else {
+						  solucion.add(area.getLocalName());
+						  System.out.println("Añadido un " + area.getLocalName() + " a las soluciones");
+					  }
 		    	  }
 		    	  lstSolucionesFactibles.add(solucion);
 		      }
@@ -320,14 +337,17 @@ public class NegociacionAreaBehaviour extends Behaviour{
 		strPesos.setLength(0);
 		strAreas.append("Negociaci�n por Area: " + area.getLocalName() + ". Id Negociacion: " + idNegociacion + "\n");
 		strPesos.append("Negociaci�n por Area: " + area.getLocalName() + ". Id Negociacion: " + idNegociacion + "\n");
-		
+
 		//para mostrar en los los vehiculos implicados
 		for (int i = 0; i < lstVehiculos.size(); i++){
 			strAreas.append(lstVehiculos.get(i).toString().trim() + "   ");
 			strPesos.append(lstVehiculos.get(i).toString().trim() + "   ");
 		}
 		strAreas.append("\n");
-		strPesos.append("\n");		
+		strPesos.append("\n");
+
+		System.out.println(strAreas);
+		System.out.println(strPesos);
 		
 		for (List<String> lst : lstSolucionesFactibles) {
 			total = 0;
@@ -348,6 +368,7 @@ public class NegociacionAreaBehaviour extends Behaviour{
 			strPesos.append(" = " + total + "\n");
 			if (total >= maxPuntuacion) {
 				solucionGanadora = lst;
+				System.out.println("Solución ganadora --> " + solucionGanadora.toString());
 				maxPuntuacion = total;
 			}
 		}

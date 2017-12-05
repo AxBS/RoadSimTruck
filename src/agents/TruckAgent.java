@@ -49,6 +49,9 @@ public class TruckAgent extends Agent {
 
 	//Selected Area to stop
 	private float AreaX=0, AreaY=0;
+
+	//Parking Ilegal o no
+	private boolean illegalParking = false;
 	
 	
 	//Favourite area list
@@ -626,6 +629,14 @@ public class TruckAgent extends Agent {
 
 	public Area getDesignatedArea() {
 		return designatedArea;
+	}
+
+	public boolean isIllegalParking() {
+		return illegalParking;
+	}
+
+	public void setIllegalParking(boolean illegalParking) {
+		this.illegalParking = illegalParking;
 	}
 
 	public void setDesignatedArea(Area designatedArea) {
