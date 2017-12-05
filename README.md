@@ -76,7 +76,7 @@ Imagen general de RoadSim
 ![I once had chickens](https://raw.githubusercontent.com/pjimenezmateo/RoadSim/master/screenshot.png)
 
 
-![I once had chickens](https://raw.githubusercontent.com/AxBS/RoadSimTruck/develop/src/staticFiles/images/ScreenshotImagenRoadSimTruck.png)
+![RoadSimTruck Image](https://raw.githubusercontent.com/AxBS/RoadSimTruck/blob/develop/src/staticFiles/images/ScreenshotImagenRoadSimTruck.png)
 
 #ToDo
 Tenemos que hacer las siguientes pruebas:
