@@ -17,15 +17,19 @@ el trayecto de la manera óptima, con el mínimo número de paradas.
 Los siguientes conceptos son necesarios para la compresión del funcionamiento de RoadSimTruck
 
 + Area - Elemento en el que los camiones pueden realizar un estacionamiento (Desarrollado como una intersección).
+
 + Intersección - Punto de cambio entre vías. Puede ser una roton, una salida de la vía, una entrada en la via, un cambio en el número de cariles o en general
 cualquier cambio en las características de la vía.
+
 + Segmento - Carretera que transcurre entre una intersección de origen y una intersección de destino.
+
 + Step - División de segmentos en parcela para adecuar la carretera al mapa.
+
 + Truck - Camión que aparece en un punto concreto de la carretera con una intersección de destino, calcula su intinerario y se dirige al destino.
 
 
-Version Control
-===============
+#Version Control
+
 El proyecto está formado por varias ramas. 
 Las más importantes son la master y la develop.
 
@@ -37,16 +41,42 @@ Además de esto, se insta a utilizar descripciones de commit extensas y explicat
 
 #Dependencias
 
-Las principales dependencias del proyecto son [JADE](http://jade.tilab.com/download/jade/) y [JGraphT](http://jgrapht.org/). Para poder ejecutar el proyecto es necesario añadir las librerias de ambas dependencias.
+Las principales dependencias del proyecto son [Java8](http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html) ,[JADE](http://jade.tilab.com/download/jade/) y [JGraphT](http://jgrapht.org/). Para poder ejecutar el proyecto es necesario añadir las librerias de ambas dependencias.
+
+#Ficheros necesarios 
+
+Este sistema funciona a partir de unos ficheros que se generan a partir del repositorio [ImgToJsonGUI](https://github.com/AxBS/ImgToJsonGUI).
+
+Los ficheros que genera este repositorio son los siguientes:
+
++ red.png o ESCENARIO_SIN_NOMBRE.png - Es la imagen del fondo del programa.
+
++ segments.json - JSON con la información de los segmentos.
+
++ intersection.json - JSON con la información de las intersecciones.
+
++ steps.json - JSON con la información de los steps.
+
++ prohibitions.json - Este fichero tiene los caminos permitidos del mapa. No se utiliza en este repositorio.
+
+Además de estos ficheros también se necesita el fichero events.csv con la información de los Trucks que van a entrar en el sistema.
 
 #Funcionamiento 
 
+La clase principal del sistema es el fichero main/main.java
+
+#Comunicaciones
+
+Las comunicaciones básicas del sistema esta en este [documento](https://docs.google.com/document/d/1848YJjbIVC82Ef8d5pPVPDiNrgqNmWWhjIhvYVcVrno/edit)
 
 #Screenshot
 
 Imagen general de RoadSim
 
 ![I once had chickens](https://raw.githubusercontent.com/pjimenezmateo/RoadSim/master/screenshot.png)
+
+
+//////// Poner imagen ScreenshotImagenRoadSimTruck.png
 
 #ToDo
 Tenemos que hacer las siguientes pruebas:
