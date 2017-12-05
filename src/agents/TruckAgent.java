@@ -369,33 +369,33 @@ public class TruckAgent extends Agent {
 	 * Calcular la x e y en función del pk
 	 * */
 	public void calculateCoordinatesFromPk(float pkToStart, Segment s){
-		System.out.println("----------------------------------------------");
-		System.out.println("CALCULATE COORDINATES FROM PK");
+		//System.out.println("----------------------------------------------");
+		//System.out.println("CALCULATE COORDINATES FROM PK");
 		LinkedList<Step> steps =(LinkedList<Step>) s.getSteps();
-		System.out.println("Steps --> " + steps.toString());
+		//System.out.println("Steps --> " + steps.toString());
 		float pkIni = s.getPkIni();
-		System.out.println("Segment pk ini --> " + pkIni);
+		//System.out.println("Segment pk ini --> " + pkIni);
 		float distFin = pkToStart-pkIni;
-		System.out.println("Distancia final --> " + distFin);
+		//System.out.println("Distancia final --> " + distFin);
 		double segLength = s.getLength();
-		System.out.println("Distancia segment --> " + segLength);
+		//System.out.println("Distancia segment --> " + segLength);
 		//Calculamos la proporción del pk en cada step
 		ArrayList<Double> distanceStep = new ArrayList<>();
 		for(Step st: steps)
 			distanceStep.add(Math.sqrt(Math.pow((st.getDestinationX()-st.getOriginX()),2.f)) + Math.pow((st.getDestinationY()-st.getOriginY()),2.f));
-		System.out.println("Distancia en px de steps --> " + distanceStep.toString());
+		//System.out.println("Distancia en px de steps --> " + distanceStep.toString());
 		//Sumarlas todas
 		double distTotalSteps = 0;
 		for(double d: distanceStep)
 			distTotalSteps+= d;
-		System.out.println("Distancia total de los steps --> " + distTotalSteps);
+		//System.out.println("Distancia total de los steps --> " + distTotalSteps);
 
 		//Sacar los km de cada step
 		ArrayList<Double> kmStep = new ArrayList<>();
 		for(double d: distanceStep)
 			kmStep.add((d*segLength)/distTotalSteps);
 
-		System.out.println("Km de los steps --> " + kmStep.toString());
+		//System.out.println("Km de los steps --> " + kmStep.toString());
 		Step stepToStart = null;
 		double distanceAux = 0;
 		int i = 0;
@@ -408,28 +408,28 @@ public class TruckAgent extends Agent {
 			i++;
 		}
 
-		System.out.println("Distancia del step en el que te has pasado -->" + distanceAux);
-		System.out.println("Step en el que inicias --> " + stepToStart);
+		//System.out.println("Distancia del step en el que te has pasado -->" + distanceAux);
+		//System.out.println("Step en el que inicias --> " + stepToStart);
 
 		//Tenemos el step
 		if(stepToStart == null){
-			System.out.println("No ha encontrado el step. ALgo ha fallado");
+			System.out.println("calculateCoordinatesFromPk - No ha encontrado el step. ALgo ha fallado");
 		}else {
 			int xStep = stepToStart.getOriginX();
 			int yStep = stepToStart.getOriginY();
 			double distancFromIniStep = distFin;
 			int indice = i;
 			while(indice > 0){
-				System.out.println("Indice dentro de los km --> " + indice);
-				System.out.println("Indice total --> " + i);
+				//System.out.println("Indice dentro de los km --> " + indice);
+				//System.out.println("Indice total --> " + i);
 				distancFromIniStep -= kmStep.get(indice);
 				indice--;
 			}
-			System.out.println("Distancia from init step --> " + distancFromIniStep);
+			//System.out.println("Distancia from init step --> " + distancFromIniStep);
 			int yToModify = (int)(Math.abs(stepToStart.getDestinationY()-stepToStart.getOriginY())/kmStep.get(i)*distancFromIniStep);
 			int xToModify = (int)(Math.abs(stepToStart.getDestinationX()-stepToStart.getOriginX())/kmStep.get(i)*distancFromIniStep);
-			System.out.println(" y - " + (int)(Math.abs(stepToStart.getDestinationY()-stepToStart.getOriginY())/kmStep.get(i)*distancFromIniStep));
-			System.out.println(" x - " + (int)(Math.abs(stepToStart.getDestinationX()-stepToStart.getOriginX())/kmStep.get(i)*distancFromIniStep));
+			//System.out.println(" y - " + (int)(Math.abs(stepToStart.getDestinationY()-stepToStart.getOriginY())/kmStep.get(i)*distancFromIniStep));
+			//System.out.println(" x - " + (int)(Math.abs(stepToStart.getDestinationX()-stepToStart.getOriginX())/kmStep.get(i)*distancFromIniStep));
 
 			//Pensado en la dirección de la recta
 			if(stepToStart.getDestinationX() > stepToStart.getOriginX() ){
@@ -444,13 +444,13 @@ public class TruckAgent extends Agent {
 				yToModify = stepToStart.getOriginY() - yToModify;
 			}
 
-			System.out.println("xFinal --> " + xToModify);
-			System.out.println("yFinal --> " + yToModify);
+			//System.out.println("xFinal --> " + xToModify);
+			//System.out.println("yFinal --> " + yToModify);
 
 			setX(xToModify);
 			setY(yToModify);
 		}
-		System.out.println("---------------------------------------------");
+		//System.out.println("---------------------------------------------");
 	}
 
 
