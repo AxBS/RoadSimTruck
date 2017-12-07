@@ -18,14 +18,15 @@ Los siguientes conceptos son necesarios para la compresión del funcionamiento d
 
 + Area - Elemento en el que los camiones pueden realizar un estacionamiento (Desarrollado como una intersección).
 
-+ Intersección - Punto de cambio entre vías. Puede ser una roton, una salida de la vía, una entrada en la via, un cambio en el número de cariles o en general
++ Intersección - Punto de cambio entre vías. Puede ser una rotonda, una salida de la vía, una entrada en la via, un cambio en el número de cariles o en general
 cualquier cambio en las características de la vía.
 
 + Segmento - Carretera que transcurre entre una intersección de origen y una intersección de destino.
 
-+ Step - División de segmentos en parcela para adecuar la carretera al mapa.
++ Step - División de segmentos en parcelas más reducidas para adecuar la carretera al mapa.
 
-+ Truck - Camión que aparece en un punto concreto de la carretera con una intersección de destino, calcula su intinerario y se dirige al destino.
++ Truck - Camión que aparece en un punto concreto de la carretera con una intersección de destino, calcula su intinerario y se dirige al destino 
+parando en las Areas que le resulten más beneficiosas para realizar su recorrido. 
 
 
 #Version Control
