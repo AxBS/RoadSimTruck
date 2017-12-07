@@ -63,7 +63,25 @@ Además de estos ficheros también se necesita el fichero events.csv con la info
 
 #Funcionamiento 
 
-La clase principal del sistema es el fichero main/main.java
+La clase principal del sistema es el fichero main/main.java. Esta clase, a su vez, va creando y lanzando instancias de las
+demás clases participantes del proyecto de la siguiente manera:
+
+1.Primero encontramos todos los valores que va a usar la aplicación, como por ejemplo el primer y último
+tick de la simulación, así como la longitud de estos.
+
+2.En la ejecución del programa, primero crea una instancia del agente RMA para control de los otros agentes
+del sistema.
+
+3.Se crean y lanzan instancias de los containers para Segments y Areas.
+
+4.Cargamos el mapa sobre el que se va a realizar la simulación.
+
+5.Procedemos con el lanzamiento de los agentes principales, el de la interfaz, si es necesario,
+el TimeKeeperAgent (encargado de lanzar los ticks del sistema), y los containers para los coches (carContainer)
+y para los camiones (truckContainer).
+
+6.Finalmente creamos y lanzamos una instancia del EventManager, el agente encargado de leer el archivo de eventos
+y traducirlo en el lanzamiento de los agentes necesarios, tanto de coches como de camiones.
 
 #Comunicaciones
 
