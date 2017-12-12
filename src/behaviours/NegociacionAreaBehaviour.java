@@ -2,13 +2,8 @@ package behaviours;
 
 import java.io.FileWriter;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import agents.AreaAgent;
 import jade.core.AID;
@@ -42,7 +37,7 @@ public class NegociacionAreaBehaviour extends Behaviour{
 		area = a;
 		idNegociacion = id;
 		
-		lstVehiculos = new ArrayList<String>(area.getLstPreReservas());
+		lstVehiculos = new ArrayList<String>(area.getLstReservas());
 		lstVehiculos.add(vehicle);
 		preferencias = new HashMap<String, ArrayList<String>>();
 		tiemposConduccion = new HashMap<String, Double>();
@@ -131,6 +126,7 @@ public class NegociacionAreaBehaviour extends Behaviour{
 		
 		
 		ACLMessage msg = new ACLMessage(ACLMessage.CFP);
+		//TODO Este mensaje es el que se envía para pasar a solicitar una prereserva en otra area, aprovechemonos de ello
 		msg.setOntology("cancelPrereserveOntology");
 		msg.setReplyWith(idNegociacion);
 		msg.setContent("");
@@ -207,6 +203,8 @@ public class NegociacionAreaBehaviour extends Behaviour{
 		if (msg != null) {
 			String[] tmp = msg.getContent().replace("[","").replace("]", "").replace(" ", "").split(",");
 			lstPreferidas = new ArrayList<String> (Arrays.asList(tmp));
+
+			Collections.reverse(lstPreferidas);
 
 			System.out.println("AREA : Preferencias obtenidas de "+msg.getSender().getLocalName() + " Son: " + lstPreferidas.toString());
 			//Elimino las areas posteriores a la de la negociacion
