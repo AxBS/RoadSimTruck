@@ -102,7 +102,7 @@ Imagen general de RoadSim
 Modificaciones a realizar (posteriormente):
 
 Comportamiento al liberar una plaza en una area:    
-    Dinamismo al proyecto, al liberar un area, enviamos un mensaje a los camiones que nos han pedido sitio para avisar que tenemos plaza libre.
+    Dinamismo al proyecto, al liberar una plaza en una area, enviamos un mensaje a los camiones que nos han pedido sitio para avisar que tenemos plaza libre.
 
 Montener un histórico de los vehículos que han pedido plaza en cada area.
     -Este hitórico se mantiene en las areas hasta que los trucks dejan de estar interesados en las plazas (realizan una reserva formal).
