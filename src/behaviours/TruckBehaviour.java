@@ -212,9 +212,11 @@ public class TruckBehaviour extends CyclicBehaviour {
 						} else {
 							if(this.agent.getCurrentSegment().getDestination().getId().equals(this.agent.getFinalIntersection()))
 								this.kill();
-							else
+							else {
 								System.out.println("Calculamos otra vez el area");
+								System.out.println("Area designada de " + agent.getAID().getLocalName() + " : " + agent.getDesignatedArea().getId());
 								this.agent.calculateWay(this.agent.getFinalIntersection());
+							}
 							break;
 						}
 					}
