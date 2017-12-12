@@ -126,6 +126,7 @@ public class NegociacionAreaBehaviour extends Behaviour{
 		
 		
 		ACLMessage msg = new ACLMessage(ACLMessage.CFP);
+		//TODO Este mensaje es el que se envía para pasar a solicitar una prereserva en otra area, aprovechemonos de ello
 		msg.setOntology("cancelPrereserveOntology");
 		msg.setReplyWith(idNegociacion);
 		msg.setContent("");
