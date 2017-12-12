@@ -108,7 +108,6 @@ Montener un histórico de los vehículos que han pedido plaza en cada area.
     -Este hitórico se mantiene en las areas hasta que los trucks dejan de estar interesados en las plazas (realizan una reserva formal).
 
 
-
 Tenemos que hacer las siguientes pruebas:
 
 Utilizando 2 areas:
