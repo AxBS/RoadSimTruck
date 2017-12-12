@@ -61,7 +61,6 @@ public class NegociacionAreaBehaviour extends Behaviour{
 			break;
 		case 1:
 			obtenerPreferenciasVehiculos();
-			System.out.println("-Preferencias obtenidas");
 			// Hemos recibido ya todas las preferencias de los vehiculos
 			if (preferencias.size() == lstVehiculos.size()) {
 				step = 2;
@@ -195,7 +194,7 @@ public class NegociacionAreaBehaviour extends Behaviour{
 		//((AreaAgent)myAgent).inc_Sol_Preferencias();
 		((AreaAgent)myAgent).send(msg);
 		
-		System.out.println("Enviadas peticiones a " + lstVehiculos.toString() + " ID: " + idNegociacion + " DE: " + ((AreaAgent)myAgent).getLocalName());
+		System.out.println("Enviadas peticiones a " + lstVehiculos.toString() + " Origen(AREA): " + ((AreaAgent)myAgent).getLocalName());
 		mt = MessageTemplate.and(MessageTemplate.MatchOntology("sendTruckPreferencesOntology"),
 								MessageTemplate.MatchReplyWith(idNegociacion));
 		
@@ -208,6 +207,8 @@ public class NegociacionAreaBehaviour extends Behaviour{
 		if (msg != null) {
 			String[] tmp = msg.getContent().replace("[","").replace("]", "").replace(" ", "").split(",");
 			lstPreferidas = new ArrayList<String> (Arrays.asList(tmp));
+
+			System.out.println("AREA : Preferencias obtenidas de "+msg.getSender().getLocalName() + " Son: " + lstPreferidas.toString());
 			//Elimino las areas posteriores a la de la negociacion
 			while (!lstPreferidas.isEmpty() && !lstPreferidas.get(0).equals(area.getLocalName()) )
 			{
@@ -245,8 +246,6 @@ public class NegociacionAreaBehaviour extends Behaviour{
 		System.out.println("Num areas preferidas " + preferencias);
 		if (preferencias.size() != lstVehiculos.size())
 			System.err.println("====>>>  ATENCION: Lista de preferencias incompleta.");
-
-		System.out.println("=>> Calculo Pesos Votos realizado");
 				
 		//Compruebo si solo hay un area preferida para todos.
 		maxNumPref = 0;

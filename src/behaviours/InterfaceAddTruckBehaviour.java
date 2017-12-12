@@ -42,8 +42,8 @@ public class InterfaceAddTruckBehaviour extends CyclicBehaviour {
 		if (msg != null) {
 
 			JSONObject cont = new JSONObject(msg.getContent());
-			System.out.println("SE CREA UN NOUVO TRUCK");
-			System.out.println(cont.toString());
+			System.out.println("Un nuevo truck entra en el mapa \n");
+			//System.out.println(cont.toString());
 			final String id = cont.getString("id");
 			final String seg = cont.getString("seg");
 			final float x = (float) cont.getInt("x");

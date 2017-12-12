@@ -77,19 +77,19 @@ public class TruckBehaviour extends CyclicBehaviour {
 		ACLMessage msgIllegalPrereserve = myAgent.receive(mtIllegalPrereserve);
 
 		if(msgFailPrereserve != null){
-			System.out.println("NOS HAN RECHAZADO");
+			System.out.println("TRUCK : Nos solicitan las preferencias " + agent.getAID().getLocalName());
 			if(!agent.isIllegalParking())
 				agent.addBehaviour(new NegociacionVehiculoBehaviour(agent,msgFailPrereserve ));
 		}
 
 		if(msgCancelPrereserve != null){
-			System.out.println("ELIMINAMOS LA PRERESERVA");
+			System.out.println("TRUCK : "+ agent.getAID().getLocalName()+ " Eliminamos la prereserva en " + msgCancelPrereserve.getSender().getLocalName());
 			if(!agent.isIllegalParking())
 				agent.addBehaviour(new SolicitarPrereservaBehaviour(agent, agent.getFavouriteAreas().get(0).getId()));
 		}
 
 		if(msgIllegalPrereserve != null){
-			System.out.println("Ha llegado el mensaje");
+			System.out.println("TRUCK: "+ agent.getAID().getLocalName()+ " va a aparcar ilegalmente.");
 			agent.setIllegalParking(true);
 			this.agent.setDesignatedArea(this.agent.getFavouriteAreas().get(0));
 		}
@@ -113,10 +113,13 @@ public class TruckBehaviour extends CyclicBehaviour {
 					timeToRest = this.tiempoDeParadaMedia;
 
 					agent.setDistanceCovered(0);
-					if(agent.isIllegalParking())
+					if(agent.isIllegalParking()) {
 						this.sendMsgWithoutConversationId("leavingIllegalParkingOntology", this.agent.getDesignatedArea().getAreaAgent().getAID(), new JSONObject());
-					else
+						this.agent.setDesignatedArea(null);
+					}else {
 						this.sendMsgWithoutConversationId("leavingParkingOntology", this.agent.getDesignatedArea().getAreaAgent().getAID(), new JSONObject());
+						this.agent.setDesignatedArea(null);
+					}
 					agent.setIllegalParking(false);
 				}
 			} else {
@@ -148,7 +151,7 @@ public class TruckBehaviour extends CyclicBehaviour {
 					if(this.agent.getDesignatedArea() != null &&
 							this.agent.getDistanceToIntersection(this.agent.getDesignatedArea().getIntersection()) <= 30
 							&& !reserved) {
-						System.out.println("Mandamos un mensaje de reserva desde el TruckBehaviour");
+						System.out.println("TRUCK: "+ myAgent.getAID().getLocalName()+"Mandamos un mensaje de reserva desde el TruckBehaviour");
 						reserved = true;
 						this.sendMsgWithoutConversationId("reserveOntology", this.agent.getDesignatedArea().getAreaAgent().getAID(), new JSONObject());
 						//Actualizamos el lugar en el que paramos
@@ -162,11 +165,12 @@ public class TruckBehaviour extends CyclicBehaviour {
 					if (aprox(AreaX, currentX) && aprox(AreaY, currentY)) {
 						//Truck in the desigantes stopping point
 						//TODO diferenciar entre un parking illegal y el guay
-						if(!this.agent.isIllegalParking())
-							this.sendMsgWithoutConversationId("parkingOntology",this.agent.getDesignatedArea().getAreaAgent().getAID(), new JSONObject());
-						else
-							this.sendMsgWithoutConversationId("illegalParkingOntology",this.agent.getDesignatedArea().getAreaAgent().getAID(), new JSONObject());
+						if(!this.agent.isIllegalParking()) {
+							this.sendMsgWithoutConversationId("parkingOntology", this.agent.getDesignatedArea().getAreaAgent().getAID(), new JSONObject());
 
+						} else{
+							this.sendMsgWithoutConversationId("illegalParkingOntology", this.agent.getDesignatedArea().getAreaAgent().getAID(), new JSONObject());
+						}
 						System.out.println("::::::TRUCK RESTING::::::");
 						stopped = true;
 					}

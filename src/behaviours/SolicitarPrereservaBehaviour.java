@@ -25,7 +25,7 @@ public class SolicitarPrereservaBehaviour extends Behaviour{
 	@Override
 	public void action() {
 		
-		System.out.println("SolicitarPrereservaBeha de " + vehicle.getLocalName() + " => " + vehicle.getFavouriteAreas().toString());
+
 		switch (step)
 		{
 			case 0:
@@ -49,13 +49,13 @@ public class SolicitarPrereservaBehaviour extends Behaviour{
 			{		
 				vehicle.setDesignatedAreaFromString(msg.getSender().getLocalName());
 				vehicle.recalculate(vehicle.getCurrentSegment().getOrigin().getId(), vehicle.getDesignatedArea().getIntersection().getId());
-				System.out.println("El veh�culo " + vehicle.getLocalName() + " preregistra la asignaci�n en " + vehicle.getFavouriteAreas().toString());
+				System.out.println("El veh�culo " + vehicle.getLocalName() + " tiene la PREreserva confirmada en " + msg.getSender().getLocalName());
 				
 			}
 			else
 			{
 				//vehicle.delAreaAsignada();
-				System.out.println("El veh�culo " + vehicle.getLocalName() + " se le deniega la preasignaci�n en " + msg.getSender().getLocalName());
+				System.out.println("El veh�culo " + vehicle.getLocalName() + " se le deniega la PREreserva en " + msg.getSender().getLocalName());
 			}
 			step = 10;
 		}

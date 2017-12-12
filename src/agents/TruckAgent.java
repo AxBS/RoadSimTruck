@@ -86,7 +86,7 @@ public class TruckAgent extends Agent {
 	private int tiempoMaximoConduccion = 240;
 
 	protected void setup() {
-		
+		System.out.println("\n\n -----NEW TRUCK-----");
 		//Register the agent
 		DFAgentDescription dfd = new DFAgentDescription();
 		dfd.setName(getAID());
@@ -260,6 +260,7 @@ public class TruckAgent extends Agent {
 	 * @param interFinal Id de la intersección a la que queremos llegar
 	 * */
 	public void calculateWay(String interFinal){
+
 		System.out.println("CalculateWay");
 		System.out.println("Distancia a la intersección --> " + this.getDistanceToIntersection(this.map.getIntersectionByID(interFinal)));
 		System.out.println("Maxima distacia --> " + this.maxDistanceToGo);
@@ -271,6 +272,8 @@ public class TruckAgent extends Agent {
 		} else{
 			//TODO Pensamos desde el origen y es más eficiente pensar desde el destino para no
 			//TODO tener que dar la vuelta
+			this.setActualDestination(interFinal);
+			System.out.println("TRUCK: "+ this.getAID().getLocalName()+" Llegamos hasta el final.");
 			this.path = this.alg.getPath(this.map, this.getCurrentSegment().getOrigin().getId(),
 					this.finalIntersection, this.maxSpeed);
 		}
