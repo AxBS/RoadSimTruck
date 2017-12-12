@@ -143,7 +143,7 @@ public class NegociacionAreaBehaviour extends Behaviour{
 			msg.clearAllReceiver();
 			String v = lstVehiculos.get(i);
 
-			System.out.println("v NEgociación --> " + v);
+			System.out.println("v Negociación --> " + v );
 
 			if (solucionGanadora.size()>0) //TODO: numca deberia de ser 0
 			{

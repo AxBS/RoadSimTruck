@@ -25,13 +25,13 @@ public class RecepcionPrereservasBehaviour extends OneShotBehaviour{
 		reply.setContent("");
 		reply.setOntology("prereserveOntology");
 
-		// Se puede reservar si las reservas + los trucks aparcados son < que los tracks que caben
+		// Se puede PREreservar si las reservas + los trucks aparcados son < que los tracks que caben
 		if (area.getLstReservas().size() + area.getParking().size() < area.getArea().getCapacity()) {
 			
 			// Anyado el agente a la prereserva
 			area.getLstPreReservas().add(msg.getSender().getLocalName());
 			reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);			
-			System.out.println(area.getArea().getId() + " CONFIRMA PREreserva de " + msg.getSender().getLocalName() + "Ahora estan: " + area.getLstPreReservas() );
+			System.out.println(area.getArea().getId() + " CONFIRMA Prereserva de " + msg.getSender().getLocalName() + "Ahora estan: " + area.getLstPreReservas() );
 			area.setEstadoNegociacion(false);
 		}		
 		//Empieza proceso negociacion
@@ -39,7 +39,7 @@ public class RecepcionPrereservasBehaviour extends OneShotBehaviour{
 			reply.setPerformative(ACLMessage.REJECT_PROPOSAL);
 			area.setEstadoNegociacion(true);
 			area.incNumeroTotalNegociaciones();
-			System.out.println("===>>> " + area.getLocalName() + " Lanzo la negociacion numero " + area.getNumTotalNegociaciones() + " lanzada por " + msg.getSender().getLocalName());
+			System.out.println("===>>> RPB " + area.getLocalName() + " Lanzo la negociacion numero " + area.getNumTotalNegociaciones() + " lanzada por " + msg.getSender().getLocalName());
 			area.addBehaviour(new NegociacionAreaBehaviour(area, reply.getReplyWith(), msg.getSender().getLocalName()));
 			System.out.println(area.getAID().getLocalName() + " deniega reserva de " + msg.getSender().getLocalName());			
 		}

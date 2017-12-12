@@ -41,7 +41,7 @@ public class RecepcionReservasBehaviour extends OneShotBehaviour{
 			reply.setPerformative(ACLMessage.REJECT_PROPOSAL);
 			area.setEstadoNegociacion(true);
 			area.incNumeroTotalNegociaciones();
-			System.out.println("===>>> " + area.getLocalName() + " Lanzo la negociacion numero " + area.getNumTotalNegociaciones() + " lanzada por " + msg.getSender().getLocalName());
+			System.out.println("===>>> RRB" + area.getLocalName() + " Lanzo la negociacion numero " + area.getNumTotalNegociaciones() + " lanzada por " + msg.getSender().getLocalName());
 			area.addBehaviour(new NegociacionAreaBehaviour(area, reply.getReplyWith(), msg.getSender().getLocalName()));
 			System.out.println(area.getAID().getLocalName() + " deniega reserva de " + msg.getSender().getLocalName());			
 		}
