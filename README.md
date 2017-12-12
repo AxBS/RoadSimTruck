@@ -98,6 +98,17 @@ Imagen general de RoadSim
 ![RoadSimTruck Image](https://raw.githubusercontent.com/AxBS/RoadSimTruck/blob/develop/src/staticFiles/images/ScreenshotImagenRoadSimTruck.png)
 
 #ToDo
+
+Modificaciones a realizar (posteriormente):
+
+Comportamiento al liberar una plaza en una area:    
+    Dinamismo al proyecto, al liberar un area, enviamos un mensaje a los camiones que nos han pedido sitio para avisar que tenemos plaza libre.
+
+Montener un histórico de los vehículos que han pedido plaza en cada area.
+    -Este hitórico se mantiene en las areas hasta que los trucks dejan de estar interesados en las plazas (realizan una reserva formal).
+
+
+
 Tenemos que hacer las siguientes pruebas:
 
 Utilizando 2 areas:
@@ -109,6 +120,7 @@ Test 2 - 2 aparcados bien y 3 ilegales
 Test 3 - Todos aparcados bien
 
 Test 4 - Todos aparcados ilegales
+
 
 Tenemos que sacar un fichero de configuración de Jose 
 o algo así y hemos de sacar un log.
