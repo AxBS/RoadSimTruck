@@ -2,6 +2,7 @@ package behaviours;
 
 import java.text.DecimalFormat;
 
+import environment.Area;
 import org.json.JSONObject;
 import org.json.ToJSON;
 
@@ -35,8 +36,6 @@ public class TruckBehaviour extends CyclicBehaviour {
 	private char serviceLevelSegment;
 	private boolean drawGUI;
 	private long previousTick;
-	private boolean stopped;
-	private boolean reserved = false;
 	private long timeToRest;
 	private long tiempoDeParadaMedia;
 
@@ -84,7 +83,7 @@ public class TruckBehaviour extends CyclicBehaviour {
 
 		if(msgCancelPrereserve != null){
 			System.out.println("TRUCK : "+ agent.getAID().getLocalName()+ " Eliminamos la prereserva en " + msgCancelPrereserve.getSender().getLocalName());
-			if(!agent.isIllegalParking())
+			if(!agent.isIllegalParking()&& !agent.isReserved())
 				agent.addBehaviour(new SolicitarPrereservaBehaviour(agent, agent.getFavouriteAreas().get(0).getId()));
 		}
 
@@ -100,16 +99,19 @@ public class TruckBehaviour extends CyclicBehaviour {
 		if (msg != null) {
 
 			//If truck is stopped, take a tick out of waiting time until waiting time is 0
-			if (stopped) {
+			if (agent.isStopped()) {
 				//Truck dentro del area
+				agent.setReserved(false);
+
 				timeToRest--;
 				//
 				
 				if (timeToRest <= 0) {
 					//El truck sale del area
 					//TODO Desatar negociación para siguiente area destino si no podemos llegar al destino final
-					stopped = false;
-					reserved = false;
+					agent.setStopped(false);
+					//stopped = false;
+
 					timeToRest = this.tiempoDeParadaMedia;
 
 					agent.setDistanceCovered(0);
@@ -118,6 +120,7 @@ public class TruckBehaviour extends CyclicBehaviour {
 						this.agent.setDesignatedArea(null);
 					}else {
 						this.sendMsgWithoutConversationId("leavingParkingOntology", this.agent.getDesignatedArea().getAreaAgent().getAID(), new JSONObject());
+						System.out.println("Tiempo de espera acabado, saliendo..." + myAgent.getAID().getLocalName());
 						this.agent.setDesignatedArea(null);
 					}
 					agent.setIllegalParking(false);
@@ -145,14 +148,22 @@ public class TruckBehaviour extends CyclicBehaviour {
 					float currentY = this.agent.getY();
 
 					// AreaX & AreaY
-					float AreaX = this.agent.getAreaX();
-					float AreaY = this.agent.getAreaY();
+					Area areaDesignada = this.agent.getDesignatedArea();
+					float AreaX;
+					float AreaY;
+					if(areaDesignada != null) {
+						AreaX = areaDesignada.getIntersection().getX();
+						AreaY = areaDesignada.getIntersection().getY();
+					}else{
+						AreaX = this.agent.getFavouriteAreas().get(0).getIntersection().getX();
+						AreaY = this.agent.getFavouriteAreas().get(0).getIntersection().getY();
+					}
 
 					if(this.agent.getDesignatedArea() != null &&
 							this.agent.getDistanceToIntersection(this.agent.getDesignatedArea().getIntersection()) <= 30
-							&& !reserved) {
+							&& !agent.isReserved()) {
 						System.out.println("TRUCK: "+ myAgent.getAID().getLocalName()+"Mandamos un mensaje de reserva desde el TruckBehaviour");
-						reserved = true;
+						agent.setReserved(true);
 						this.sendMsgWithoutConversationId("reserveOntology", this.agent.getDesignatedArea().getAreaAgent().getAID(), new JSONObject());
 						//Actualizamos el lugar en el que paramos
 						this.agent.setAreaX(this.agent.getDesignatedArea().getIntersection().getX());
@@ -172,7 +183,8 @@ public class TruckBehaviour extends CyclicBehaviour {
 							this.sendMsgWithoutConversationId("illegalParkingOntology", this.agent.getDesignatedArea().getAreaAgent().getAID(), new JSONObject());
 						}
 						System.out.println("::::::TRUCK RESTING::::::");
-						stopped = true;
+						agent.setStopped(true);
+						//stopped = true;
 					}
 
 					// Update pkCurrent with this speed and the difference

@@ -140,7 +140,7 @@ public class NegociacionAreaBehaviour extends Behaviour{
 
 			System.out.println("v Negociación --> " + v );
 
-			if (solucionGanadora.size()>0) //TODO: numca deberia de ser 0
+			if (solucionGanadora.size()>0) //TODO: nunca deberia de ser 0
 			{
 				String a = solucionGanadora.get(i);
 				if (a.compareTo(area.getLocalName()) == 0)
@@ -332,8 +332,8 @@ public class NegociacionAreaBehaviour extends Behaviour{
 		
 		strAreas.setLength(0);
 		strPesos.setLength(0);
-		strAreas.append("Negociaci�n por Area: " + area.getLocalName() + ". Id Negociacion: " + idNegociacion + "\n");
-		strPesos.append("Negociaci�n por Area: " + area.getLocalName() + ". Id Negociacion: " + idNegociacion + "\n");
+		strAreas.append("Negociaci�n por areas - Area: " + area.getLocalName() + ". Id Negociacion: " + idNegociacion + "\n");
+		strPesos.append("Negociaci�n por pesos - Area: " + area.getLocalName() + ". Id Negociacion: " + idNegociacion + "\n");
 
 		//para mostrar en los los vehiculos implicados
 		for (int i = 0; i < lstVehiculos.size(); i++){

@@ -63,6 +63,7 @@ public class AreaBehaviour extends CyclicBehaviour {
 				this.areaAgent.getParking().add(msg.getSender().getLocalName());
 				this.areaAgent.getLstReservas().remove(msg.getSender().getLocalName());
 				System.out.println(" ---------------- Parking Ontology ------------------");
+				System.out.println(" Truck :" + msg.getSender().getLocalName());
 				System.out.println(this.areaAgent.getParking().toString());
 
 			} else if (msg.getOntology().equals("leavingParkingOntology")){

@@ -52,10 +52,16 @@ public class TruckAgent extends Agent {
 
 	//Parking Ilegal o no
 	private boolean illegalParking = false;
-	
+
+	//Agent is reserved
+	private boolean reserved = false;
+
+	//Agent is reserved
+	private boolean stopped = false;
 	
 	//Favourite area list
 	private ArrayList<Area> favouriteAreas;
+	private ArrayList<Area> passedAreas;
 	private Area designatedArea;
 	
 	//MaxDistance the truck can cover without stopping
@@ -261,10 +267,11 @@ public class TruckAgent extends Agent {
 	 * */
 	public void calculateWay(String interFinal){
 
-		System.out.println("CalculateWay");
+		System.out.println("CalculateWay " + this.getAID().getLocalName());
 		System.out.println("Distancia a la intersección --> " + this.getDistanceToIntersection(this.map.getIntersectionByID(interFinal)));
 		System.out.println("Maxima distacia --> " + this.maxDistanceToGo);
-		if(this.getDistanceToIntersection(this.map.getIntersectionByID(interFinal)) > this.maxDistanceToGo){
+		System.out.println("Reservados --> " + this.isReserved());
+		if(this.getDistanceToIntersection(this.map.getIntersectionByID(interFinal)) > this.maxDistanceToGo && !this.isReserved()){
 			//Generas las areas favoritas
 			this.generateFavouriteAreas(this.map.getListAreas());
 			addBehaviour(new SolicitarPrereservaBehaviour(this, "-"));
@@ -278,6 +285,10 @@ public class TruckAgent extends Agent {
 					this.finalIntersection, this.maxSpeed);
 		}
 	}
+
+	/**
+	 * Calcular la distancia desde el pk de inicio hasta una intersección
+	 * */
 
 
 	/*
@@ -317,12 +328,28 @@ public class TruckAgent extends Agent {
 	public void generateFavouriteAreas(ArrayList<Area> areas) {
 		ArrayList<Area> preferences = new ArrayList<>();
 		HashMap<Double,Area> bag = new HashMap<>();
+		this.passedAreas = new ArrayList<Area>();
 		
 		
 		for(Area a:areas) {
 			//Filtramos aquellas Areas inalcanzables
 			if((this.maxDistanceToGo-this.distanceCovered)>=this.getDistanceToIntersection(a.getIntersection()))
 				bag.put(this.getDistanceToIntersection(a.getIntersection()), a);
+
+			//Filtramos aquellas Areas que nos hemos pasado
+			double distanceTruckToIntersection = this.getDistanceToIntersection(this.map.getIntersectionByID(this.initialIntersection));
+
+			Path path;
+			path = alg.getPath(map, initialIntersection, a.getIntersection().getId(), this.maxSpeed);
+			double distanceAreaToOrigin = 0.0;
+			for(Segment seg : path.getSegmentPath()) {
+				distanceAreaToOrigin+= seg.getLength();
+			}
+
+			if(distanceAreaToOrigin<= distanceTruckToIntersection){
+				passedAreas.add(a);
+			}
+
 		}
 		
 		Set<String> keySet = (Set) bag.keySet();
@@ -333,6 +360,8 @@ public class TruckAgent extends Agent {
 		for(int i = 0; i<3 && i<list.size(); i++) {
 			preferences.add(bag.get(list.get(i)));
 		}
+
+		preferences.removeAll(passedAreas);
 
 		this.favouriteAreas = preferences;
 		System.out.println("Areas favoritas " + this.getFavouriteAreas().toString());
@@ -685,5 +714,20 @@ public class TruckAgent extends Agent {
 		return this.maxDistanceToGo - this.distanceCovered;
 	}
 
+	public boolean isReserved() {
+		return reserved;
+	}
+
+	public void setReserved(boolean reserved){
+		this.reserved = reserved;
+	}
+
+	public boolean isStopped() {
+		return stopped;
+	}
+
+	public void setStopped(boolean stopped) {
+		this.stopped = stopped;
+	}
 }
 
