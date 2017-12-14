@@ -99,8 +99,8 @@ public class SolicitarPrereservaBehaviour extends Behaviour{
 				vehicle.recalculate(vehicle.getCurrentSegment().getOrigin().getId(), areaPref.getIntersection().getId());
 				
 				System.out.println("ESTOY EN SolicitarReserva. Envio a: " + areaPref + " preregistro ilegal de: " + vehicle.getLocalName());
-				avisarAreaDeIlegal(areaPref.getId());
-				
+				//avisarAreaDeIlegal(areaPref.getId());
+				vehicle.setIllegalParking(true);
 				step = 10;
 			}
 		}

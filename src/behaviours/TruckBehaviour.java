@@ -118,12 +118,13 @@ public class TruckBehaviour extends CyclicBehaviour {
 					if(agent.isIllegalParking()) {
 						this.sendMsgWithoutConversationId("leavingIllegalParkingOntology", this.agent.getDesignatedArea().getAreaAgent().getAID(), new JSONObject());
 						this.agent.setDesignatedArea(null);
+						agent.setIllegalParking(false);
 					}else {
 						this.sendMsgWithoutConversationId("leavingParkingOntology", this.agent.getDesignatedArea().getAreaAgent().getAID(), new JSONObject());
 						System.out.println("Tiempo de espera acabado, saliendo..." + myAgent.getAID().getLocalName());
 						this.agent.setDesignatedArea(null);
 					}
-					agent.setIllegalParking(false);
+					this.agent.calculateWay(this.agent.getFinalIntersection());
 				}
 			} else {
 
@@ -169,23 +170,6 @@ public class TruckBehaviour extends CyclicBehaviour {
 						this.agent.setAreaX(this.agent.getDesignatedArea().getIntersection().getX());
 						this.agent.setAreaY(this.agent.getDesignatedArea().getIntersection().getY());
 					}
-					// Check if it is has arrived at the designated area.
-					// If it is in the vicinity, the truck stops for the desired
-					// time (ticks).
-
-					if (aprox(AreaX, currentX) && aprox(AreaY, currentY)) {
-						//Truck in the desigantes stopping point
-						//TODO diferenciar entre un parking illegal y el guay
-						if(!this.agent.isIllegalParking()) {
-							this.sendMsgWithoutConversationId("parkingOntology", this.agent.getDesignatedArea().getAreaAgent().getAID(), new JSONObject());
-
-						} else{
-							this.sendMsgWithoutConversationId("illegalParkingOntology", this.agent.getDesignatedArea().getAreaAgent().getAID(), new JSONObject());
-						}
-						System.out.println("::::::TRUCK RESTING::::::");
-						agent.setStopped(true);
-						//stopped = true;
-					}
 
 					// Update pkCurrent with this speed and the difference
 					// between previousTick and currentTick
@@ -208,16 +192,12 @@ public class TruckBehaviour extends CyclicBehaviour {
 
 						// If there is still a node to go
 						if (this.agent.getPath().getGraphicalPath().size() > 1) {
-
 							// Remove the already run path
 							increment -= distNext;
-
 							this.agent.getPath().getGraphicalPath().remove(0);
 							next = this.agent.getPath().getGraphicalPath().get(0);
-
 							currentX = next.getOriginX();
 							currentY = next.getOriginY();
-
 							distNext = (float) Math.sqrt((currentX - next.getDestinationX())
 									* (currentX - next.getDestinationX())
 									+ (currentY - next.getDestinationY()) * (currentY - next.getDestinationY()));
@@ -225,9 +205,18 @@ public class TruckBehaviour extends CyclicBehaviour {
 							if(this.agent.getCurrentSegment().getDestination().getId().equals(this.agent.getFinalIntersection()))
 								this.kill();
 							else {
-								System.out.println("Calculamos otra vez el area");
+								if(!this.agent.isIllegalParking()) {
+									this.sendMsgWithoutConversationId("parkingOntology", this.agent.getDesignatedArea().getAreaAgent().getAID(), new JSONObject());
+									System.out.println("::::::LEGAL TRUCK RESTING::::::");
+								} else{
+									this.sendMsgWithoutConversationId("illegalParkingOntology", this.agent.getDesignatedArea().getAreaAgent().getAID(), new JSONObject());
+									System.out.println("::::::ILLEGAL TRUCK RESTING::::::");
+								}
+								agent.setStopped(true);
+
+
+								System.out.println(agent.getAID().getLocalName() +  " ha llegado a un area");
 								System.out.println("Area designada de " + agent.getAID().getLocalName() + " : " + agent.getDesignatedArea().getId());
-								this.agent.calculateWay(this.agent.getFinalIntersection());
 							}
 							break;
 						}

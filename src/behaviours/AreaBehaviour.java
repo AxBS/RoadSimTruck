@@ -67,11 +67,8 @@ public class AreaBehaviour extends CyclicBehaviour {
 				System.out.println(this.areaAgent.getParking().toString());
 
 			} else if (msg.getOntology().equals("leavingParkingOntology")){
-
 				this.areaAgent.getParking().remove(msg.getSender().getLocalName());
-
 			} else if (msg.getOntology().equals("illegalParkingOntology")){
-
 				this.areaAgent.doIllegalParking(msg.getSender().getLocalName());
 			} else if (msg.getOntology().equals("leavingIllegalParkingOntology"))
 				this.areaAgent.getLstIlegales().remove(msg.getSender().getLocalName());
