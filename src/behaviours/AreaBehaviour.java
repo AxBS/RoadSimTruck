@@ -45,6 +45,7 @@ public class AreaBehaviour extends CyclicBehaviour {
 
 		if(msg != null){
 			if (msg.getOntology().equals("prereserveOntology")){
+				System.out.println("----- Prereserve Ontology " + msg.getSender().getLocalName() + " -----");
 				if (areaAgent.isNegociando())
 				{
 					System.out.println("Ya hay negociacion en area: " + areaAgent.getLocalName());
@@ -57,21 +58,26 @@ public class AreaBehaviour extends CyclicBehaviour {
 				}
 
 			} else if (msg.getOntology().equals("reserveOntology")){
+				System.out.println("----- Reserve Ontology " + msg.getSender().getLocalName() + " -----");
 				this.areaAgent.addBehaviour(new RecepcionReservasBehaviour(this.areaAgent, msg));
 
 			} else if (msg.getOntology().equals("parkingOntology")){
 				this.areaAgent.getParking().add(msg.getSender().getLocalName());
 				this.areaAgent.getLstReservas().remove(msg.getSender().getLocalName());
-				System.out.println(" ---------------- Parking Ontology ------------------");
+				System.out.println(" ---------------- Parking Ontology "+ msg.getSender().getLocalName() +" ------------------");
 				System.out.println(" Truck :" + msg.getSender().getLocalName());
 				System.out.println(this.areaAgent.getParking().toString());
 
 			} else if (msg.getOntology().equals("leavingParkingOntology")){
+				System.out.println("----- Leaving Parking Ontology " + msg.getSender().getLocalName() + " -----");
 				this.areaAgent.getParking().remove(msg.getSender().getLocalName());
 			} else if (msg.getOntology().equals("illegalParkingOntology")){
+				System.out.println("----- Illegal Parking Ontology " + msg.getSender().getLocalName() + " -----");
 				this.areaAgent.doIllegalParking(msg.getSender().getLocalName());
-			} else if (msg.getOntology().equals("leavingIllegalParkingOntology"))
+			} else if (msg.getOntology().equals("leavingIllegalParkingOntology")) {
+				System.out.println("----- Leaving Illegal Ontology " + msg.getSender().getLocalName() + " -----");
 				this.areaAgent.getLstIlegales().remove(msg.getSender().getLocalName());
+			}
 		}
 		else if (areaAgent.getBufferNegociaciones().size() > 0)
 		{
