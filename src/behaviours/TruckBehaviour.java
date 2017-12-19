@@ -158,6 +158,8 @@ public class TruckBehaviour extends CyclicBehaviour {
 					}else{
 						AreaX = this.agent.getFavouriteAreas().get(0).getIntersection().getX();
 						AreaY = this.agent.getFavouriteAreas().get(0).getIntersection().getY();
+						/*this.agent.setDesignatedArea(this.agent.getFavouriteAreas().get(0));
+						this.agent.setIllegalParking(true);*/
 					}
 
 					if(this.agent.getDesignatedArea() != null &&
