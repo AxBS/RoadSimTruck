@@ -37,7 +37,7 @@ public class NegociacionAreaBehaviour extends Behaviour{
 		area = a;
 		idNegociacion = id;
 		
-		lstVehiculos = new ArrayList<String>(area.getLstReservas());
+		lstVehiculos = new ArrayList<String>(area.getLstPreReservas());
 		lstVehiculos.add(vehicle);
 		preferencias = new HashMap<String, ArrayList<String>>();
 		tiemposConduccion = new HashMap<String, Double>();

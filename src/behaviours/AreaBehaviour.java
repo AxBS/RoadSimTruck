@@ -48,9 +48,8 @@ public class AreaBehaviour extends CyclicBehaviour {
 				System.out.println("----- Prereserve Ontology " + msg.getSender().getLocalName() + " -----");
 				if (areaAgent.isNegociando())
 				{
-					System.out.println("Ya hay negociacion en area: " + areaAgent.getLocalName());
 					areaAgent.getBufferNegociaciones().add(msg);
-					System.out.println("Apilo la reserva para " + areaAgent.getLocalName() + " del vehiculo " + msg.getSender().getLocalName() + " La cola es: " + areaAgent.getBufferNegociaciones().size());
+					System.out.println("Existe una negociación en el area. Apilo la reserva para " + areaAgent.getLocalName() + " del vehiculo " + msg.getSender().getLocalName() + " La cola es: " + areaAgent.getBufferNegociaciones().size());
 				}
 				else {
 					areaAgent.setEstadoNegociacion(true);
