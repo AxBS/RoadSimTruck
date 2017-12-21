@@ -86,7 +86,11 @@ y traducirlo en el lanzamiento de los agentes necesarios, tanto de coches como d
 
 #Comunicaciones
 
-Las comunicaciones básicas del sistema esta en este [documento](https://docs.google.com/document/d/1848YJjbIVC82Ef8d5pPVPDiNrgqNmWWhjIhvYVcVrno/edit)
+Las comunicaciones básicas del sistema esta en este [documento](https://drive.google.com/open?id=18t2eZZuBWxeBP9UBqB_GbbmsKX6ENu3hJueCydJ8ys4)
+
+#Documentación extendida
+
+Hay una documentación más extendiado con capturas de pantalla y explicación del funcionamiento en este [documento](https://drive.google.com/open?id=1YpJNYARyZEFKrr2yyvyArQV2C5hzGIO7P9anvM1t62g)
 
 #Screenshot
 
@@ -107,16 +111,15 @@ Comportamiento al liberar una plaza en una area:
 Montener un histórico de los vehículos que han pedido plaza en cada area.
     -Este hitórico se mantiene en las areas hasta que los trucks dejan de estar interesados en las plazas (realizan una reserva formal).
 
-
 Tenemos que hacer las siguientes pruebas:
 
 Utilizando 2 areas:
 
-Test 1 - 4 aparcados bien y 1 ilegales
+Test 1 - 4 aparcados bien y 1 ilegales WELL
 
 Test 2 - 2 aparcados bien y 3 ilegales 
 
-Test 3 - Todos aparcados bien
+Test 3 - Todos aparcados bien WELL
 
 Test 4 - Todos aparcados ilegales
 
